@@ -24,4 +24,46 @@
 #
 #################################################################################
 #
+CXX = g++
+CC  = gcc
+AR  = ar
+#
+CCDEBUG  = -g
+CXXDEBUG = -g
+#
+CXXFLAGS = -Wall
+CXXLIBSOFLAGS = -fPIC -shared 
+#
+SOURCEDIR = ../src
+LIBSRC = $(SOURCEDIR)/serialConnection.cpp $(SOURCEDIR)/smartTFT.cpp
+LIBOBJ = serialConnection.o smartTFT.o
+SOLIBNAME = smartTFT.so
+STATLIBNAME = smartTFT.a
+#
+#
+all: lib-static lib-shared
+
+lib-static:
+	$(CXX) $(CXXFLAGS) -c $(LIBSRC)
+
+lib-shared:
+	$(CXX) $(CXXFLAGS) $(CXXLIBSOFLAGS) -c $(LIBSRC)
+	$(CXX) -shared  -Wl,-soname,$(SOLIBNAME) -o $(SOLIBNAME) $(LIBOBJ)
+
+
+#g++ -fPIC -shared myclass.cc -o myclass.so
+#g++ class_user.cc -ldl -o class_user
+#-Wall
+#ar -cvq libctest.a ctest1.o ctest2.o
+#ar -t libctest.a
+#
+#main: libshared.so main.o
+    #$(CXX) -o main  main.o -L. -lshared
+#
+#libshared.so: shared.cpp
+    #$(CXX) -fPIC -c shared.cpp -o shared.o
+    #$(CXX) -shared  -Wl,-soname,libshared.so -o libshared.so shared.o
+#
+#clean:
+    #$rm *.o *.so
 
