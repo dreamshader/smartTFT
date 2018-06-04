@@ -20,7 +20,16 @@
 #  limitations under the License.
 #
 #################################################################################
+# Note: you may copy the library to every location you want.
+#       Hold in mind that, in case of you use the shared library, 
+#       you have to set your LD_LIBRARY_PATH environment variable
+#       to point to that location 
+#       ( e.g.  export LD_LIBRARY_PATH=~/mylibs/:LD_LIBRARY_PATH} ).
+#       In addition you have to tell the compiler where to find the
+#       library using the -I and -L arguments (e.g. -L./ -I./ ) and
+#       what's the name of the lib with the -l argument( -l smartTFT ).
 #
+#################################################################################
 CXX = g++
 CC  = gcc
 AR  = ar
@@ -34,8 +43,8 @@ CXXLIBSOFLAGS = -fPIC -shared
 SOURCEDIR = ../src
 LIBSRC = $(SOURCEDIR)/serialConnection.cpp $(SOURCEDIR)/smartTFT.cpp
 LIBOBJ = serialConnection.o smartTFT.o
-SOLIBNAME = smartTFT.so
-STATLIBNAME = smartTFT.a
+SOLIBNAME = libsmartTFT.so
+STATLIBNAME = libsmartTFT.a
 #
 #
 all: lib-static lib-shared

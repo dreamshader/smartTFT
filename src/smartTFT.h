@@ -111,7 +111,7 @@ class smartTFT {
 
 
   public:
-    smartTFT(void) {  connection = new serialConnection(); };
+//    smartTFT(void) {  connection = new serialConnection(); };
 
     smartTFT( char *devname = (char*) DEFAULT_DEVICE, 
               uint32_t baud = DEFAULT_BAUD, 
