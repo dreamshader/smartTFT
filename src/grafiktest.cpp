@@ -1,3 +1,91 @@
+/*
+ ***********************************************************************
+ *
+ *  grafiktest.cpp - a simple test for smartTFT class
+ *
+ *  Copyright (C) 2018 Dreamshader (aka Dirk Schanz)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *  
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ ***********************************************************************
+ *
+ * Options:
+ *
+ * -------------- communication port for connection --------------------
+ *
+ * --com devicename (same as --com=devicename resp. -c devicename)
+ *
+ *   Default is --com=/dev/ttyUSB0
+ *
+ * ---------------- baudrate for serial connection ---------------------
+ *
+ * --baud baudrate (same as --baud=baudrate resp. -b baudrate)
+ *
+ *   Default is --baud=38400
+ *
+ * ---------------- databit for serial connection ----------------------
+ *
+ * --data bits (same as --data=bits resp. -d bits)
+ *			may be 5 up to 8
+ *
+ *   Default is --data=8
+ *
+ * ---------------- parity for serial connection -----------------------
+ *
+ * --parity parity (same as --parity=parity resp. -p parity)
+ *			may be e/E (even), o/O (odd), n/N (none)
+ *
+ *   Default is --parity=n
+ *
+ * --------------- stoppbits for serial connection ---------------------
+ *
+ * --stop stoppbits (same as --stop=stoppbits resp. -s stoppbits)
+ *			may be 1 or 2
+ *
+ *   Default is --stop=1
+ *
+ * --------------- handshake for serial connection ---------------------
+ *
+ * --handshake handshake (same as --handshake=handshake resp. -h handshake)
+ *			may be n/N (no handshake), x/X (XON/XOFF)
+ *
+ *   Default is --handshake=n
+ *
+ * ----------------------------- help ----------------------------------
+ *
+ * --help 	(same as -? )
+ *
+ *   Show options and exit
+ *
+ ***********************************************************************
+ */
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <getopt.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/signal.h>
+#include <sys/param.h>
+#include <fcntl.h>
+#include <termios.h>
+
+
+
 #include <iostream>
 #include <string>
 
@@ -259,177 +347,25 @@ void mediabuttons() {
 
 }
 
-int main( int argc, char *argv[] )
-{
-    int retVal = 0;
-
-    display = new smartTFT();
-
-//    display->tft_tft_println("lalala");
-//    display->tft_tft_println(25);
-//    display->tft_tft_println(25,HEX);
-//    display->tft_tft_println();
-
-//    display->tft_tft_print("lalala");
-//    display->tft_tft_print(25);
-//    display->tft_tft_print(25,HEX);
-
-//    delete display;
-
-  display->tft_fillScreen(ST7735_BLACK);
 
 
 
-  // large block of text
-  display->tft_fillScreen(ST7735_BLACK);
 
-  testdrawtext((char*) "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST7735_WHITE);
-
-  // tft print function!
-  tftPrintTest();
-
-  // a single pixel
-  display->tft_drawPixel(display->tft_width()/2, display->tft_height()/2, ST7735_GREEN);
-
-
-  // line draw test
-  testlines(ST7735_YELLOW);
-
-  // optimized lines
-  testfastlines(ST7735_RED, ST7735_BLUE);
-
-  testdrawrects(ST7735_GREEN);
-
-  testfillrects(ST7735_YELLOW, ST7735_MAGENTA);
-
-  display->tft_fillScreen(ST7735_BLACK);
-
-  testfillcircles(10, ST7735_BLUE);
-  testdrawcircles(10, ST7735_WHITE);
-
-  testroundrects();
-
-  testtriangles();
-
-  mediabuttons();
-
-  display->tft_invertDisplay(true);
-
-  display->tft_invertDisplay(false);
+#define COMPORT			"/dev/ttyUSB0"
+#define E_BAUDRATE	-10
+#define E_DATABIT		-11
+#define E_PARITY		-12
+#define E_STOPPBITS	-13
+#define E_HANDSHAKE	-14
+#define E_DEVICE		-15
+#define E_NULL		-16
+#define E_NOFD		-17
 
 
-    return( retVal );
-}
-
-
-#ifdef NEW_VERSION
-
-/*
- ***********************************************************************
- *
- *  soehnle_drucker.c - simple program to get data from serial line on RPi
- *  			sent by a soehnle device
- *
- *  Copyright (C) 2013 Dreamshader (Dirk Schanz)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- ***********************************************************************
- */
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <getopt.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/signal.h>
-#include <sys/param.h>
-#include <fcntl.h>
-#include <termios.h>
-
-/* **** soehnle_drucker.c **********************************************************
- * 
- * brief description:
- * listen on serial port for incoming data.
- * all received data will be formattet using printf and written to a logfile.
- * 
- * *********************************************************************************
- * Compile:
- *
- * gcc -o soehnle_drucker soehnle_drucker.c
- * 
- * *********************************************************************************
- * Options:
- *
- * -------------------- communication port for connection --------------------------
- *
- * --com devicename (same as --com=devicename resp. -c devicename)
- *
- *   Default is --com=/dev/ttyAMA0
- *
- * ---------------------- baudrate for serial connection ---------------------------
- *
- * --baud baudrate (same as --baud=baudrate resp. -b baudrate)
- *
- *   Default is --baud=9600
- *
- * ---------------------- databit for serial connection ----------------------------
- *
- * --data bits (same as --data=bits resp. -d bits)
- *			may be 5 up to 8
- *
- *   Default is --data=8
- *
- * ---------------------- parity for serial connection ----------------------------
- *
- * --parity parity (same as --parity=parity resp. -p parity)
- *			may be e/E (even), o/O (odd), n/N (none)
- *
- *   Default is --parity=n
- *
- * ---------------------- stoppbits for serial connection ----------------------------
- *
- * --stop stoppbits (same as --stop=stoppbits resp. -s stoppbits)
- *			may be 1 or 2
- *
- *   Default is --stop=1
- *
- * ---------------------- handshake for serial connection ----------------------------
- *
- * --handshake handshake (same as --handshake=handshake resp. -h handshake)
- *			may be n/N (no handshake), x/X (XON/XOFF)
- *
- *   Default is --handshake=n
- *
- * ---------------.------------------- help --.-------------------------------------
- *
- * --help 	(same as -? )
- *
- *   Show options and exit
- *
- * *********************************************************************************
-*/
 
 
 typedef struct serial_param_t {
-unsigned char device[256];
+char *device;
 int dev_fd;
 struct termios oldtio;
 struct termios rawtio;
@@ -440,17 +376,10 @@ unsigned char stoppbits;
 unsigned char handshake;
 } serial_param;
 
-int inp_present;
 
-#define COMPORT			"/dev/ttyAMA0"
-#define E_PARAM_BAUDRATE	-10
-#define E_PARAM_DATABIT		-11
-#define E_PARAM_PARITY		-12
-#define E_PARAM_STOPPBITS	-13
-#define E_PARAM_HANDSHAKE	-14
-#define E_PARAM_DEVICE		-15
-#define E_PARAM_NULL		-16
-#define E_PARAM_NOFD		-17
+
+
+
 
 /* ---------------------------------------------------------------------------------
  | void set_defaults( struct serial_param_t *ctl_param )
@@ -463,9 +392,8 @@ void set_defaults( struct serial_param_t *ctl_param )
 {
 	if( ctl_param != NULL )
 	{
-		memset( ctl_param->device, '\0', sizeof(ctl_param->device) );
-		strcpy( ctl_param->device, COMPORT );
-		ctl_param->baud = 9600;
+		ctl_param->device = (char*) COMPORT;
+		ctl_param->baud = 38400;
 		ctl_param->databit = 8;
 		ctl_param->parity = 'N';
 		ctl_param->stoppbits = 1;
@@ -474,6 +402,11 @@ void set_defaults( struct serial_param_t *ctl_param )
 
 	return;
 }
+
+
+
+
+
 
 
 /* ---------------------------------------------------------------------------------
@@ -491,11 +424,11 @@ void help( struct serial_param_t *ctl_param, short failed )
 	fprintf(stderr, 
 		"--com devicename (same as --com=devicename resp. -c devicename)\n");
 	fprintf(stderr, "use device devicename\n");
-	fprintf(stderr, "Default is --com=/dev/ttyAMA0\n");
+	fprintf(stderr, "Default is --com=/dev/ttyUSB0\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "--baud baudrate (same as --baud=baudrate resp. -b baudrate)\n");
 	fprintf(stderr, "set speed to baudrate\n");
-	fprintf(stderr, "Default is --baud=9600\n");
+	fprintf(stderr, "Default is --baud=38400\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "--data bits (same as --data=bits resp. -d bits)\n");
 	fprintf(stderr, "set databits to bits (5 up to 8 )\n");
@@ -565,13 +498,13 @@ void get_arguments ( int argc, char **argv, struct serial_param_t *ctl_param, sh
 
 		switch (next_option) {
 			case 'c':
-				if( strlen(optarg) < sizeof(ctl_param->device) )
+				if( strlen(optarg) )
 				{
-					strcpy( ctl_param->device, optarg );
+					ctl_param->device = strdup( optarg );
 				}
 				else
 				{
-					help( ctl_param, E_PARAM_DEVICE);
+					help( ctl_param, E_DEVICE);
 				}
 				break;
 			case 'b':
@@ -607,46 +540,6 @@ void get_arguments ( int argc, char **argv, struct serial_param_t *ctl_param, sh
 	} while (next_option != -1);
 }
 
-
-/* ---------------------------------------------------------------------------------
- | typedef void (*sighandler_t)(int);
- |
- | Declaration for a signal handler
- -----------------------------------------------------------------------------------
-*/
-
-typedef void (*sighandler_t)(int);
-
-/* ---------------------------------------------------------------------------------
- | static sighandler_t handle_signal (int sig_nr, sighandler_t signalhandler) 
- |
- | setup a new signal handling for a specific signal
- -----------------------------------------------------------------------------------
-*/
-
-static sighandler_t handle_signal (int sig_nr, sighandler_t signalhandler) 
-{
-   struct sigaction neu_sig, alt_sig;
-   neu_sig.sa_handler = signalhandler;
-   sigemptyset (&neu_sig.sa_mask);
-   neu_sig.sa_flags = SA_RESTART;
-   if (sigaction (sig_nr, &neu_sig, &alt_sig) < 0)
-      return SIG_ERR;
-   return alt_sig.sa_handler;
-}
-
-/* ---------------------------------------------------------------------------------
- | static void catch_SIGIO(int val)
- |
- | A simple handler that can be installed using handle_signal
- -----------------------------------------------------------------------------------
-*/
-
-static void catch_SIGIO(int val)
-{
-	inp_present = 1;
-	return;
-}
 
 /* ---------------------------------------------------------------------------------
  | int check_param( struct serial_param_t *ctl_param )
@@ -687,7 +580,7 @@ int check_param( struct serial_param_t *ctl_param )
 				case 460800:
 					break;
 				default:
-					fail = E_PARAM_BAUDRATE;
+					fail = E_BAUDRATE;
 			}
 
 			switch( ctl_param->databit )
@@ -698,7 +591,7 @@ int check_param( struct serial_param_t *ctl_param )
 				case 8:
 					break;
 				default:
-					fail = E_PARAM_DATABIT;
+					fail = E_DATABIT;
 			}
 
 			switch( ctl_param->parity )
@@ -711,7 +604,7 @@ int check_param( struct serial_param_t *ctl_param )
 				case 'N':
 					break;
 				default:
-					fail = E_PARAM_PARITY;
+					fail = E_PARITY;
 			}
 
 			switch( ctl_param->stoppbits )
@@ -720,7 +613,7 @@ int check_param( struct serial_param_t *ctl_param )
 				case 2:
 					break;
 				default:
-					fail = E_PARAM_STOPPBITS;
+					fail = E_STOPPBITS;
 			}
 
 			switch( ctl_param->handshake )
@@ -731,358 +624,149 @@ int check_param( struct serial_param_t *ctl_param )
 				case 'X':
 					break;
 				default:
-					fail = E_PARAM_HANDSHAKE;
+					fail = E_HANDSHAKE;
 			}
 		}
 		else
 		{
-			fail = E_PARAM_DEVICE;
+			fail = E_DEVICE;
 		}
 	}
 	else
 	{
-		fail = E_PARAM_NULL;
+		fail = E_NULL;
 	}
 
 	return( fail );
 }
 
 
-/* ---------------------------------------------------------------------------------
- | int open_device( struct serial_param_t *ctl_param )
- | 
- | open serial device
- -----------------------------------------------------------------------------------
-*/
 
-int open_device( struct serial_param_t *ctl_param )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int main( int argc, char *argv[] )
 {
-	// open non-blocking
+    int retVal = 0;
+    int failed;
+    struct serial_param_t ctl_param;
+    short mystic;
 
-	if( ctl_param != NULL )
-	{
-		ctl_param->dev_fd = open( ctl_param->device, O_RDWR|O_NOCTTY|O_NONBLOCK);
-		return( ctl_param->dev_fd );
-	}
+    set_defaults( &ctl_param );
+    get_arguments ( argc, argv, &ctl_param, &mystic);
 
-	return( E_PARAM_NULL );
+    if( (failed = check_param( &ctl_param )) != 0 )
+    {
+        switch(failed)
+        {
+            case E_BAUDRATE:
+                fprintf(stderr, "Invalid baudrate\n");
+                break;
+            case E_DATABIT:
+                fprintf(stderr, "Invalid databits\n");
+                break;
+            case E_PARITY:
+                fprintf(stderr, "Invalid parity\n");
+                break;
+            case E_STOPPBITS:
+                fprintf(stderr, "Invalid stoppbits\n");
+                break;
+            case E_HANDSHAKE:
+                fprintf(stderr, "Invalid handshake\n");
+                break;
+            case E_DEVICE:
+                fprintf(stderr, "Invalid device\n");
+                break;
+            case E_NULL:
+                fprintf(stderr, "cannot check parameter -> NULL\n");
+                break;
+        }
+    }
+    else
+    {
+        display = new smartTFT();
+
+        display->tft_fillScreen(ST7735_BLACK);
+
+        // large block of text
+        display->tft_fillScreen(ST7735_BLACK);
+
+        testdrawtext((char*) "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST7735_WHITE);
+
+        // tft print function!
+        tftPrintTest();
+
+        // a single pixel
+        display->tft_drawPixel(display->tft_width()/2, display->tft_height()/2, ST7735_GREEN);
+
+
+        // line draw test
+        testlines(ST7735_YELLOW);
+
+        // optimized lines
+        testfastlines(ST7735_RED, ST7735_BLUE);
+
+        testdrawrects(ST7735_GREEN);
+
+        testfillrects(ST7735_YELLOW, ST7735_MAGENTA);
+
+        display->tft_fillScreen(ST7735_BLACK);
+
+        testfillcircles(10, ST7735_BLUE);
+        testdrawcircles(10, ST7735_WHITE);
+
+        testroundrects();
+
+        testtriangles();
+
+        mediabuttons();
+
+        display->tft_invertDisplay(true);
+
+        display->tft_invertDisplay(false);
+    }
+
+    return( retVal );
 }
-
-/* ---------------------------------------------------------------------------------
- | void close_device( struct serial_param_t *ctl_param )
- | 
- | close the serial device
- -----------------------------------------------------------------------------------
-*/
-
-void close_device( struct serial_param_t *ctl_param )
-{
-	if( ctl_param != NULL )
-	{
-		if( ctl_param->dev_fd > 0 )
-		{
-			close( ctl_param->dev_fd );
-			ctl_param->dev_fd = 0;
-		}
-	}
-}
-
-/* ---------------------------------------------------------------------------------
- | int reset_device( struct serial_param_t *ctl_param )
- | 
- | reset old parameter of serial port
- -----------------------------------------------------------------------------------
-*/
-
-int reset_device( struct serial_param_t *ctl_param )
-{
-	int fail;
-
-	if( ctl_param != NULL )
-	{
-        	fail = tcsetattr( ctl_param->dev_fd, TCSANOW, &ctl_param->oldtio );
-	}
-	else
-	{
-		fail = E_PARAM_NULL;
-	}
-
-	return(fail);
-}
-
-/* ---------------------------------------------------------------------------------
- | int setup_device( struct serial_param_t *ctl_param )
- | 
- | set parameter for serial communication, save current settings
- -----------------------------------------------------------------------------------
-*/
-
-int setup_device( struct serial_param_t *ctl_param )
-{
-	int fail = 0;
-
-	if( ctl_param != NULL )
-	{
-        	if( ctl_param->dev_fd > 0 )
-		{
-        		fail = tcgetattr( ctl_param->dev_fd, &ctl_param->oldtio );
-        		fail = tcgetattr( ctl_param->dev_fd, &ctl_param->rawtio );
-			cfmakeraw( &ctl_param->rawtio );
-
-			switch( ctl_param->baud )
-			{
-				case     50:
-					cfsetspeed ( &ctl_param->rawtio, B50 );
-					break;
-				case     75:
-					cfsetspeed ( &ctl_param->rawtio, B75 );
-					break;
-				case    110:
-					cfsetspeed ( &ctl_param->rawtio, B110 );
-					break;
-				case    134:
-					cfsetspeed ( &ctl_param->rawtio, B134 );
-					break;
-				case    150:
-					cfsetspeed ( &ctl_param->rawtio, B150 );
-					break;
-				case    200:
-					cfsetspeed ( &ctl_param->rawtio, B200 );
-					break;
-				case    300:
-					cfsetspeed ( &ctl_param->rawtio, B300 );
-					break;
-				case    600:
-					cfsetspeed ( &ctl_param->rawtio, B600 );
-					break;
-				case   1200:
-					cfsetspeed ( &ctl_param->rawtio, B1200 );
-					break;
-				case   1800:
-					cfsetspeed ( &ctl_param->rawtio, B1800 );
-					break;
-				case   2400:
-					cfsetspeed ( &ctl_param->rawtio, B2400 );
-					break;
-				case   4800:
-					cfsetspeed ( &ctl_param->rawtio, B4800 );
-					break;
-				case   9600:
-					cfsetspeed ( &ctl_param->rawtio, B9600 );
-					break;
-				case  19200:
-					cfsetspeed ( &ctl_param->rawtio, B19200 );
-					break;
-				case  38400:
-					cfsetspeed ( &ctl_param->rawtio, B38400 );
-					break;
-				case  57600:
-					cfsetspeed ( &ctl_param->rawtio, B57600 );
-					break;
-				case 115200:
-					cfsetspeed ( &ctl_param->rawtio, B115200 );
-					break;
-				case 230400:
-					cfsetspeed ( &ctl_param->rawtio, B230400 );
-					break;
-				case 460800:
-					cfsetspeed ( &ctl_param->rawtio, B460800 );
-					break;
-				default:
-					fail = E_PARAM_BAUDRATE;
-			}
-	
-			switch( ctl_param->databit )
-			{
-				case 5:
-					ctl_param->rawtio.c_cflag |= CS5;
-					break;
-				case 6:
-					ctl_param->rawtio.c_cflag |= CS6;
-					break;
-				case 7:
-					ctl_param->rawtio.c_cflag |= CS7;
-					break;
-				case 8:
-					ctl_param->rawtio.c_cflag |= CS8;
-					break;
-				default:
-					fail = E_PARAM_DATABIT;
-			}
-	
-			switch( ctl_param->parity )
-			{
-				case 'o':
-				case 'O':
-					ctl_param->rawtio.c_cflag |= PARODD | PARENB;
-					break;
-				case 'e':
-				case 'E':
-					ctl_param->rawtio.c_cflag |= PARENB;
-					break;
-				case 'n':
-				case 'N':
-					ctl_param->rawtio.c_cflag |= IGNPAR;
-					ctl_param->rawtio.c_cflag &= ~PARENB;
-					break;
-				default:
-					fail = E_PARAM_PARITY;
-			}
-	
-			switch( ctl_param->stoppbits )
-			{
-				case 1:
-					break;
-				case 2:
-					ctl_param->rawtio.c_cflag |= CSTOPB;
-					break;
-				default:
-					fail = E_PARAM_STOPPBITS;
-			}
-	
-			switch( ctl_param->handshake )
-			{
-				case 'n':
-				case 'N':
-					ctl_param->rawtio.c_cflag |= CLOCAL;
-					break;
-				case 'x':
-				case 'X':
-					ctl_param->rawtio.c_iflag |= IXON;
-					break;
-				default:
-					fail = E_PARAM_HANDSHAKE;
-			}
-		}
-		else
-		{
-			fail = E_PARAM_NOFD;
-		}
-	}
-	else
-	{
-		fail = E_PARAM_NULL;
-	}
-
-	if( !fail )
-	{
-        	tcflush( ctl_param->dev_fd, TCIFLUSH);
-        	fail = tcsetattr( ctl_param->dev_fd, TCSANOW, &ctl_param->rawtio );
-	}
-	
-	return( fail );
-}
-
-
-/* ---------------------------------------------------------------------------------
- | int process_data( struct serial_param_t *ctl_param )
- | 
- | print data to stdout
- | return 1 -> continue loop, return 0 -> leave loop
- -----------------------------------------------------------------------------------
-*/
-
-int process_data( struct serial_param_t *ctl_param )
-{
-	unsigned char data[512];
-	int res;
-
-	memset( data, '\0', sizeof(data) );
-
-	res = read(ctl_param->dev_fd, data, sizeof(data));
-	
-	printf("%s\n", data);
-	return(1);
-}
-
-
-main( int argc, char **argv )
-{
-
-	struct serial_param_t ctl_param;
-	short mystic;
-	int failed;
-	int res;
-	struct timeval timeout;
-	int loop;
-
-
-	timeout.tv_usec = 0;  /* milliseconds */
-	timeout.tv_sec  = 1;  /* seconds */
-
-	set_defaults( &ctl_param );
-	get_arguments ( argc, argv, &ctl_param, &mystic);
-
-	if( (failed = check_param( &ctl_param )) == 0 )
-	{
-		if( (failed = open_device( &ctl_param )) > 0 )
-		{
-			if( (failed = setup_device( &ctl_param )) == 0 )
-			{
-				loop = 1;
-				inp_present = 0;
-				handle_signal( SIGIO, catch_SIGIO );
-				fcntl(ctl_param.dev_fd, F_SETOWN, getpid());
-				fcntl(ctl_param.dev_fd, F_SETFL, FASYNC);
-
-				while (loop) 
-				{
-					if( inp_present )
-					{
-						loop = process_data( &ctl_param );
-						inp_present = 0;
-					}
-					usleep(100000);
-				}
-				reset_device( &ctl_param );
-			}
-			else
-			{
-				perror("failed to setup device");
-			}
-			close_device( &ctl_param );
-		}
-		else
-		{
-			perror("failed to open device");
-		}
-	}
-	else
-	{
-		switch(failed)
-		{
-			case E_PARAM_BAUDRATE:
-				fprintf(stderr, "Invalid baudrate\n");
-				break;
-			case E_PARAM_DATABIT:
-				fprintf(stderr, "Invalid databits\n");
-				break;
-			case E_PARAM_PARITY:
-				fprintf(stderr, "Invalid parity\n");
-				break;
-			case E_PARAM_STOPPBITS:
-				fprintf(stderr, "Invalid stoppbits\n");
-				break;
-			case E_PARAM_HANDSHAKE:
-				fprintf(stderr, "Invalid handshake\n");
-				break;
-			case E_PARAM_DEVICE:
-				fprintf(stderr, "Invalid device\n");
-				break;
-			case E_PARAM_NULL:
-				fprintf(stderr, "cannot check parameter -> NULL\n");
-				break;
-			case E_PARAM_NOFD:
-				fprintf(stderr, "Invalid filedescriptor\n");
-				break;
-		}
-
-	}
-
-}
-
-
-
-#endif // NEW_VERSION
 
 
