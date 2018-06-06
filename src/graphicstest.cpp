@@ -1,7 +1,12 @@
 /*
  ***********************************************************************
  *
- *  grafiktest.cpp - a simple test for smartTFT class
+ *  graphicstest.cpp - a simple test for smartTFT class
+ *
+ *  this program is a port of the graphicstest example of the
+ *  Adafruit ST7735 library.
+ *
+ ***********************************************************************
  *
  *  Copyright (C) 2018 Dreamshader (aka Dirk Schanz)
  *
@@ -725,11 +730,16 @@ int main( int argc, char *argv[] )
     else
     {
         display = new smartTFT();
+        if( (retVal = display->connect()) != 0 )
+        {
+fprintf(stderr, "[%d]Connect failed\n", retVal );
+        }
 
         display->tft_fillScreen(ST7735_BLACK);
 
         // large block of text
         display->tft_fillScreen(ST7735_BLACK);
+
 
         testdrawtext((char*) "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST7735_WHITE);
 

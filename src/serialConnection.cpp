@@ -514,7 +514,39 @@ int serialConnection::ser_read( char* pBuffer, int bufLen )
             {
                 if( bufLen > 0 )
                 {
-                    retVal = read( this->dev_fd, pBuffer, bufLen );
+                    char c = 0;
+                    int idx = 0;
+                    int endOfData = 0;
+                    int failtries;
+#define MAX_FAIL_TRIES   10
+
+                    while( !endOfData )
+                    {
+                        if( (retVal = read( this->dev_fd, &c, 1 )) > 0 )
+                        {
+                            failtries = 0;
+                            if( c == '\n' )
+                            {
+                                endOfData = 1;
+                            }
+                            else
+                            {
+                                pBuffer[idx++] = c;
+                                pBuffer[idx] = '\0';
+                            }
+                        }
+                        else
+                        {
+                            usleep(100000);
+                            if( ++failtries >= MAX_FAIL_TRIES )
+                            {
+                                break;
+                            }
+
+                        }
+                    }
+
+//                    retVal = read( this->dev_fd, pBuffer, bufLen );
                     this->errorNum = errno;
                 }
             }

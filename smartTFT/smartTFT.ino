@@ -15,8 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-Der Sketch verwendet 23478 Bytes (76%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 1320 Bytes (64%) des dynamischen Speichers, 728 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
+Der Sketch verwendet 21530 Bytes (70%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
+Globale Variablen verwenden 1212 Bytes (59%) des dynamischen Speichers, 836 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
 
 
 
@@ -111,12 +111,16 @@ void serialEvent() {
     // get the new byte:
     char inChar = (char)Serial.read();
     // add it to the inputString:
-    inputString += inChar;
+//    inputString += inChar;
     // if the incoming character is a newline, set a flag so the main loop can
     // do something about it:
     if (inChar == '\n') 
     {
         stringComplete = true;
+    }
+    else
+    {
+      inputString += inChar;
     }
   }
 }
@@ -502,8 +506,10 @@ int commandParser( String &dataRead )
     int bitmapSize;
     char *pData = dataRead.c_str();
 
+#ifdef SERIAL_DEBUG
 Serial.print("parsing: ");
 Serial.println( dataRead );
+#endif // SERIAL_DEBUG
 
     if( pData[0] == 'f' || pData[0] == 'F' )
     {
@@ -538,10 +544,12 @@ Serial.println( dataRead );
                 {
                     currArgPos += nextArgPos;
 
+#ifdef SERIAL_DEBUG
                     Serial.print("Arg# is ");
                     Serial.print( currArgNum );
                     Serial.print(", pos is ");
                     Serial.println( currArgPos );
+#endif // SERIAL_DEBUG
 
                     switch( currArgNum )
                     { 
@@ -1019,8 +1027,6 @@ Serial.println( dataRead );
         retVal = CMD_NONE;
     }
 
-    dataRead = "";
-
     return( retVal );
 }
 
@@ -1040,23 +1046,31 @@ void setup(void)
     Wire.onRequest(requestEvent); // register event
 
 
+#ifdef SERIAL_DEBUG
     Serial.println();
     Serial.print("Initializing SD card ...");
+#endif // SERIAL_DEBUG
     if (!SD.begin(SD_CS)) 
     {
+#ifdef SERIAL_DEBUG
         Serial.println("failed!");
+#endif // SERIAL_DEBUG
         cardPresent = false;
     }
     else
     {
+#ifdef SERIAL_DEBUG
         Serial.println("OK!");
+#endif // SERIAL_DEBUG
         cardPresent = true;
     }
 
     tft.initR(INITR_BLACKTAB);
     // tft.initR(INITR_144GREENTAB);
 
+#ifdef SERIAL_DEBUG
     Serial.println("TFT initialized");
+#endif // SERIAL_DEBUG
 
     tftBackgroundColor = DEFAULT_BG_COLOR;
     tftForegroundColor = DEFAULT_FG_COLOR;
@@ -1072,32 +1086,39 @@ void loop() {
     static uint32_t lastCheck;
     static uint32_t lastLDRread;
 
-    if( millis() >= (lastCheck + SD_CHECK_INTVAL) )
-    {
-        if( !cardPresent )
-        {
-            if (SD.begin(SD_CS)) 
-            {
-                Serial.println("sd card OK!");
-                cardPresent = true;
-            }
-        }
-        lastCheck = millis();
-    }
-
-    if( millis() >= (lastLDRread + LDR_CHECK_INTVAL) )
-    {
-        Serial.println( analogRead(LDR_INPUT) );
-        lastLDRread = millis();
-    }
+//    if( millis() >= (lastCheck + SD_CHECK_INTVAL) )
+//    {
+//        if( !cardPresent )
+//        {
+//            if (SD.begin(SD_CS)) 
+//            {
+//                Serial.println("sd card OK!");
+//                cardPresent = true;
+//            }
+//        }
+//        lastCheck = millis();
+//    }
+//
+//    if( millis() >= (lastLDRread + LDR_CHECK_INTVAL) )
+//    {
+//        Serial.println( analogRead(LDR_INPUT) );
+//        lastLDRread = millis();
+//    }
     
     // print the string when a newline arrives:
     if (stringComplete) 
     {
         retVal = commandParser( inputString );
-        sprintf(result, "%d", retVal);
-        Serial.println(result);
+
+#ifdef SERIAL_DEBUG
+        Serial.print("executing [");
+        Serial.print(inputString);
+        Serial.print("], result is");
+#endif // SERIAL_DEBUG
+
+        Serial.println(retVal);
         stringComplete = false;
+        inputString = "";
     }
 }
 
@@ -1115,32 +1136,44 @@ void loop() {
                 case CMD_SET_FG:
                 case CMD_BRIGHTNESS:
                 case CMD_SETROTATION:
+#ifdef SERIAL_DEBUG
                     Serial.print( "command is " );
                     Serial.print( retVal );
                     Serial.print( " arg is " );
+#endif // SERIAL_DEBUG
 
                     if( firstArgPos >= 0 )
                     {
                         argInt = getInteger( &pData[firstArgPos] );
+#ifdef SERIAL_DEBUG
                         Serial.println( argInt );
+#endif // SERIAL_DEBUG
                     }
                     else
                     {
+#ifdef SERIAL_DEBUG
                         Serial.println( "NO arg!" );
+#endif // SERIAL_DEBUG
                         retVal = CMD_INVAL;
                     }
                     break;
                 case CMD_TEXTWRAP:
                     argBoolean = getBoolean( &pData[firstArgPos] );
+#ifdef SERIAL_DEBUG
                     Serial.println( argInt );
+#endif // SERIAL_DEBUG
                     break;
                 case CMD_PRINTTEXT:
+#ifdef SERIAL_DEBUG
                 Serial.println("PRINTTEXT");
+#endif // SERIAL_DEBUG
                     if( firstArgPos >= 0 )
                     {
                         argXPos = getInteger( &pData[firstArgPos] );
                         currArgNum = 1;
+#ifdef SERIAL_DEBUG
                         Serial.println( argInt );
+#endif // SERIAL_DEBUG
 
                         int currArgPos = firstArgPos;
                         int nextArgPos;
@@ -1153,10 +1186,12 @@ void loop() {
                             currArgNum++;
                             currArgPos += nextArgPos;
 
+#ifdef SERIAL_DEBUG
                             Serial.print("Arg# is ");
                             Serial.print( currArgNum );
                             Serial.print(", pos is ");
                             Serial.println( currArgPos );
+#endif // SERIAL_DEBUG
 
                             switch( currArgNum )
                             { 
@@ -1181,18 +1216,24 @@ void loop() {
                     }
                     else
                     {
+#ifdef SERIAL_DEBUG
                         Serial.println( "NO arg!" );
+#endif // SERIAL_DEBUG
                         retVal = CMD_INVAL;
                     }
 
                     break;
                 case CMD_DRAWTEXT:
+#ifdef SERIAL_DEBUG
                 Serial.println("DRAWTEXT");
+#endif // SERIAL_DEBUG
                     if( firstArgPos >= 0 )
                     {
                         argXPos = getInteger( &pData[firstArgPos] );
                         currArgNum = 1;
+#ifdef SERIAL_DEBUG
                         Serial.println( argInt );
+#endif // SERIAL_DEBUG
 
                         int currArgPos = firstArgPos;
                         int nextArgPos;
@@ -1205,10 +1246,12 @@ void loop() {
                             currArgNum++;
                             currArgPos += nextArgPos;
 
+#ifdef SERIAL_DEBUG
                             Serial.print("Arg# is ");
                             Serial.print( currArgNum );
                             Serial.print(", pos is ");
                             Serial.println( currArgPos );
+#endif // SERIAL_DEBUG
 
                             switch( currArgNum )
                             { 
@@ -1230,7 +1273,9 @@ void loop() {
                     }
                     else
                     {
+#ifdef SERIAL_DEBUG
                         Serial.println( "NO arg!" );
+#endif // SERIAL_DEBUG
                         retVal = CMD_INVAL;
                     }
 
@@ -1249,7 +1294,9 @@ void loop() {
                 case CMD_FILLROUNDRECT:
                     break;
                 default:
+#ifdef SERIAL_DEBUG
                     Serial.println( "invalid command" );
+#endif // SERIAL_DEBUG
                     retVal = CMD_INVAL;
                     break;
             }
@@ -1278,10 +1325,12 @@ void loop() {
                         {
                             currArgPos += nextArgPos;
 
+#ifdef SERIAL_DEBUG
                             Serial.print("Arg# is ");
                             Serial.print( currArgNum );
                             Serial.print(", pos is ");
                             Serial.println( currArgPos );
+#endif // SERIAL_DEBUG
 
                             switch( currArgNum )
                             { 
@@ -1343,7 +1392,9 @@ void loop() {
                     }
                     else
                     {
+#ifdef SERIAL_DEBUG
                         Serial.println( "NO arg!" );
+#endif // SERIAL_DEBUG
                         retVal = CMD_INVAL;
                     }
 

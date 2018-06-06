@@ -42,6 +42,9 @@ CXXLIBSOFLAGS = -fPIC -shared
 #
 SOURCEDIR = ../src
 LIBSRC = $(SOURCEDIR)/serialConnection.cpp $(SOURCEDIR)/smartTFT.cpp
+EXAMPLSRC = $(SOURCEDIR)/graphicstest.cpp
+EXAMPLNAME = graphicstest
+EXAMPLFLAGS = -I. -L ../build -l smartTFT
 LIBOBJ = serialConnection.o smartTFT.o
 SOLIBNAME = libsmartTFT.so
 STATLIBNAME = libsmartTFT.a
@@ -55,6 +58,9 @@ lib-static:
 lib-shared:
 	$(CXX) $(CXXFLAGS) $(CXXLIBSOFLAGS) -c $(LIBSRC)
 	$(CXX) -shared  -Wl,-soname,$(SOLIBNAME) -o $(SOLIBNAME) $(LIBOBJ)
+
+example: lib-static lib-shared
+	$(CXX) -o $(EXAMPLNAME) $(EXAMPLSRC) $(EXAMPLFLAGS)
 
 
 #g++ -fPIC -shared myclass.cc -o myclass.so

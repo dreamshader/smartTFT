@@ -61,12 +61,17 @@ int16_t smartTFT::sendRequest( void )
 {
     int retVal;
 
-printf("%s", commandBuffer);
+printf("command >%s<", commandBuffer);
 
     if( connection != NULL )
     {
         retVal = (int16_t) connection->ser_write( (char*) commandBuffer,
                                                  strlen((char*) commandBuffer) );
+        if( retVal > 0 )
+        {
+            retVal = getResponse();
+        }
+printf("response [%s]\n", responseBuffer);
     }
     else
     {
