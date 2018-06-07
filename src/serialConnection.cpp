@@ -404,6 +404,7 @@ int serialConnection::set_termios( void )
         {
             retVal = tcsetattr( this->dev_fd, TCSANOW, &this->newtio );
         }
+        retVal = E_OK;
         this->errorNum = errno;
     }
 	
@@ -510,54 +511,67 @@ int serialConnection::ser_read( char* pBuffer, int bufLen )
     {
         if( this->dev_fd > 0 )
         {
-            if( bufLen >= 0 )
+            if( bufLen > 0 )
             {
-                if( bufLen > 0 )
-                {
                     char c = 0;
                     int idx = 0;
                     int endOfData = 0;
-                    int failtries;
-#define MAX_FAIL_TRIES   10
+                    static int failtries;
+                    int bracketFound = 0;
+#define MAX_FAIL_TRIES   1000
 
-                    while( !endOfData )
+                    while( idx < bufLen && !endOfData )
                     {
-                        if( (retVal = read( this->dev_fd, &c, 1 )) > 0 )
+                        c = 0;
+                        if( (retVal = read( this->dev_fd, &c, 1 )) > 0 ||
+                             c != 0 )
                         {
                             failtries = 0;
-                            if( c == '\n' )
+                            switch( c )
                             {
-                                endOfData = 1;
-                            }
-                            else
-                            {
-                                pBuffer[idx++] = c;
-                                pBuffer[idx] = '\0';
+                                case '\n':
+//                                case '\r':
+//                                    if( bracketFound )
+//                                    {
+                                        endOfData = 1;
+//                                    }
+                                    break;
+                                case ')':
+                                    bracketFound = 1;
+                                    pBuffer[idx++] = c;
+                                    pBuffer[idx] = '\0';
+                                    break;
+                                default:
+                                    pBuffer[idx++] = c;
+                                    pBuffer[idx] = '\0';
+                                    break;
                             }
                         }
                         else
                         {
-                            usleep(100000);
-                            if( ++failtries >= MAX_FAIL_TRIES )
+                            usleep(1000);
+                            if( ++failtries > MAX_FAIL_TRIES )
                             {
+                                endOfData = 1;
+sprintf(pBuffer, "timeout\n");
                                 break;
                             }
-
                         }
                     }
 
 //                    retVal = read( this->dev_fd, pBuffer, bufLen );
                     this->errorNum = errno;
-                }
             }
             else
             {
                 retVal = E_PARAM_LENGTH;
+                sprintf(pBuffer, "FAIL %d (error %d)\n", __LINE__, retVal);
             }
         }
         else
         {
             retVal = E_PARAM_NOFD;
+            sprintf(pBuffer, "FAIL %d (error %d)\n", __LINE__, retVal);
         }
     }
     else

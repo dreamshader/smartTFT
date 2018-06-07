@@ -15,8 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-Der Sketch verwendet 21530 Bytes (70%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 1212 Bytes (59%) des dynamischen Speichers, 836 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
+Der Sketch verwendet 22378 Bytes (72%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
+Globale Variablen verwenden 1276 Bytes (62%) des dynamischen Speichers, 772 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
 
 
 
@@ -106,6 +106,7 @@ void receiveEvent(int howMany)
   routine is run between each time loop() runs, so using delay inside loop can
   delay response. Multiple bytes of data may be available.
 */
+#ifdef NEVERDEF
 void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
@@ -124,6 +125,7 @@ void serialEvent() {
     }
   }
 }
+#endif
 
 #define CMD_INVAL             -1
 #define CMD_NONE               0
@@ -159,6 +161,10 @@ void serialEvent() {
 #define CMD_TFT_WIDTH         29
 #define CMD_DRAWPIXEL         30
 #define CMD_TFT_WRITE         31
+#define CMD_TFT_PRINT         32
+#define CMD_TFT_PRINTLN       33
+#define CMD_SETTEXTCOLOR      34
+
 
 
 #define MAX_ARGS            7
@@ -280,6 +286,19 @@ void tftSetForeground( uint16_t color )
     tftForegroundColor = color;
 }
 
+
+void SetTextColor1Arg(uint16_t fgColor)
+{
+    tft.setTextColor(fgColor);
+}
+
+void SetTextColor2Args(uint16_t fgColor, uint16_t bgColor)
+{
+    tft.setTextColor(fgColor, bgColor);
+
+}
+
+
 void tftSetBrightness( int value )
 {
     analogWrite(TFT_BACKLIGHT, value);
@@ -337,7 +356,10 @@ int tftWidth( void )
 }
 
 // virtual void drawPixel(int16_t x, int16_t y, uint16_t color) = 0;
-// virtual size_t write(uint8_t);
+size_t tftWrite( uint8_t char2Write )
+{
+    return( tft.write( char2Write ) );
+}
 
 
 
@@ -414,11 +436,36 @@ bool getBoolean( char* pCommand )
 char *getText( char *pData, int *pLength )
 {
     char *retVal = NULL;
+    static String resultString = "";
 
     *pLength = 0;
 
     if( pData != NULL )
     {
+        int txtLength, endText;
+
+        if( pData[0] == '"' )
+        {
+            pData++;
+            for( txtLength = endText = 0; 
+                 pData[txtLength] != '\0' && endText == 0; txtLength++ )
+            {
+                if( pData[txtLength] == '"' )
+                {
+                    endText = 1;
+                }
+                else
+                {
+                    resultString += pData[txtLength];
+                }
+            }
+            resultString += '\0';
+            retVal = resultString.c_str();
+        }
+        else
+        {
+            retVal = (char*) "NO TEXT";
+        }
     }
 
     return( retVal );
@@ -504,6 +551,10 @@ int commandParser( String &dataRead )
     int nextArgPos;
     int textLength;
     int bitmapSize;
+    uint16_t argFgColor, argBgColor;
+    int setTextColorNumArguments;
+    uint8_t argWrite;
+
     char *pData = dataRead.c_str();
 
 #ifdef SERIAL_DEBUG
@@ -539,6 +590,7 @@ Serial.println( dataRead );
                 nextArgPos = 0;
                 textLength = 0;
                 currArgNum = 1;
+                setTextColorNumArguments = 0;
 
                 do
                 {
@@ -561,6 +613,15 @@ Serial.println( dataRead );
                                 case CMD_FILLSCREEN:
                                     argColor = (uint16_t) getInteger( 
                                                 &pData[currArgPos] );
+                                    break;
+                                case CMD_SETTEXTCOLOR:
+                                    argFgColor = (uint16_t) getInteger( 
+                                                  &pData[currArgPos] );
+                                    setTextColorNumArguments = 1;
+                                    break;
+                                case CMD_TFT_WRITE:
+                                    argWrite = (uint8_t) getInteger( 
+                                                  &pData[currArgPos] );
                                     break;
                                 case CMD_BRIGHTNESS:
                                     argBrightness = getInteger( 
@@ -647,6 +708,11 @@ Serial.println( dataRead );
                                     argTopY = getInteger( 
                                                    &pData[currArgPos] );
                                     break;
+                                case CMD_SETTEXTCOLOR:
+                                    argBgColor = (uint16_t) getInteger( 
+                                                  &pData[currArgPos] );
+                                    setTextColorNumArguments = 2;
+                                    break;
 
                             }
                             break;
@@ -663,6 +729,7 @@ Serial.println( dataRead );
                                 case CMD_INVERTDISPLAY:
                                 case CMD_SETTEXTSIZE:
                                 case CMD_SETCURSOR:
+                                case CMD_SETTEXTCOLOR:
                                     break;
                                 case CMD_PRINTTEXT:
                                 case CMD_DRAWTEXT:
@@ -722,6 +789,7 @@ Serial.println( dataRead );
                                 case CMD_INVERTDISPLAY:
                                 case CMD_SETTEXTSIZE:
                                 case CMD_SETCURSOR:
+                                case CMD_SETTEXTCOLOR:
                                     break;
                                 case CMD_PRINTTEXT:
                                 case CMD_DRAWTEXT:
@@ -781,6 +849,7 @@ Serial.println( dataRead );
                                 case CMD_INVERTDISPLAY:
                                 case CMD_SETTEXTSIZE:
                                 case CMD_SETCURSOR:
+                                case CMD_SETTEXTCOLOR:
                                     break;
                                 case CMD_PRINTTEXT:
                                     argBoolean = getBoolean( &pData[currArgPos] );
@@ -843,6 +912,7 @@ Serial.println( dataRead );
                                 case CMD_SETTEXTSIZE:
                                 case CMD_SETCURSOR:
                                 case CMD_DRAWCIRCLEHELPER:
+                                case CMD_SETTEXTCOLOR:
                                     break;
                                 case CMD_PRINTTEXT:
                                     argText = getText( &pData[currArgPos] ,
@@ -895,6 +965,7 @@ Serial.println( dataRead );
                                 case CMD_FILLCIRCLEHELPER:
                                 case CMD_DRAWBITMAP:
                                 case CMD_DRAWCHAR:
+                                case CMD_SETTEXTCOLOR:
                                     break;
                                 case CMD_DRAWTRIANGLE:
                                 case CMD_FILLTRIANGLE:
@@ -916,8 +987,15 @@ Serial.println( dataRead );
             }
             else
             {
-                Serial.println( "NO arg!" );
-                retVal = CMD_INVAL;
+                switch (retVal )
+                {
+                    case CMD_TFT_HEIGHT:
+                    case CMD_TFT_WIDTH:
+                        break;
+                    default:
+                        Serial.println( "NO arg!" );
+                        retVal = CMD_INVAL;
+                }
             }
         }
 
@@ -1017,13 +1095,45 @@ Serial.println( dataRead );
             case CMD_SETTEXTSIZE:
                 tftSetTextSize(argSize);
                 break;
+            case CMD_TFT_HEIGHT:
+                tftHeight();
+                break;
+            case CMD_TFT_WIDTH:
+                tftWidth();
+                break;
+            case CMD_DRAWPIXEL:
+            case CMD_TFT_PRINT:
+            case CMD_TFT_PRINTLN:
+                break;
+            case CMD_TFT_WRITE:
+                tftWrite( argWrite );
+                break;
+            case CMD_SETTEXTCOLOR:
+                switch( setTextColorNumArguments )
+                {
+                    case 0:
+                        Serial.println( "missing color(s)!" );
+                        break;
+                    case 1:
+                        SetTextColor1Arg(argFgColor);
+                        break;
+                    case 2:
+                        SetTextColor2Args(argFgColor, argBgColor);
+                        break;
+                    default:
+                        Serial.println( "too many color(s)!" );
+                        break;
+                }
+                break;
             default:
                 break;
         }
     }
     else
     {
-        Serial.println( "no command" );
+        Serial.print( ">" );
+        Serial.print( pData );
+        Serial.println( "< no command!" );
         retVal = CMD_NONE;
     }
 
@@ -1080,7 +1190,8 @@ void setup(void)
 }
 
 
-void loop() {
+void loop() 
+{
     uint16_t  retVal;
     static char result[6];
     static uint32_t lastCheck;
@@ -1106,6 +1217,36 @@ void loop() {
 //    }
     
     // print the string when a newline arrives:
+
+
+  while (Serial.available()) 
+  {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+//    inputString += inChar;
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    if (inChar == '\n') 
+    {
+        retVal = commandParser( inputString );
+//        delay(50);
+
+//        Serial.println(inputString);
+        Serial.println(retVal);
+        inputString = "";
+
+//        stringComplete = true;
+    }
+    else
+    {
+      inputString += inChar;
+    }
+  }
+
+
+#ifdef NEVERDEF
+    
     if (stringComplete) 
     {
         retVal = commandParser( inputString );
@@ -1120,491 +1261,6 @@ void loop() {
         stringComplete = false;
         inputString = "";
     }
+#endif NEVERDEF    
 }
 
-// File     bmpFile;
-
-#ifdef NEVERDEF
-
-
-
-
-
-            switch( retVal )
-            {
-                case CMD_SET_BG:
-                case CMD_SET_FG:
-                case CMD_BRIGHTNESS:
-                case CMD_SETROTATION:
-#ifdef SERIAL_DEBUG
-                    Serial.print( "command is " );
-                    Serial.print( retVal );
-                    Serial.print( " arg is " );
-#endif // SERIAL_DEBUG
-
-                    if( firstArgPos >= 0 )
-                    {
-                        argInt = getInteger( &pData[firstArgPos] );
-#ifdef SERIAL_DEBUG
-                        Serial.println( argInt );
-#endif // SERIAL_DEBUG
-                    }
-                    else
-                    {
-#ifdef SERIAL_DEBUG
-                        Serial.println( "NO arg!" );
-#endif // SERIAL_DEBUG
-                        retVal = CMD_INVAL;
-                    }
-                    break;
-                case CMD_TEXTWRAP:
-                    argBoolean = getBoolean( &pData[firstArgPos] );
-#ifdef SERIAL_DEBUG
-                    Serial.println( argInt );
-#endif // SERIAL_DEBUG
-                    break;
-                case CMD_PRINTTEXT:
-#ifdef SERIAL_DEBUG
-                Serial.println("PRINTTEXT");
-#endif // SERIAL_DEBUG
-                    if( firstArgPos >= 0 )
-                    {
-                        argXPos = getInteger( &pData[firstArgPos] );
-                        currArgNum = 1;
-#ifdef SERIAL_DEBUG
-                        Serial.println( argInt );
-#endif // SERIAL_DEBUG
-
-                        int currArgPos = firstArgPos;
-                        int nextArgPos;
-                        int textLength;
-
-                        while( currArgNum < 6 && 
-                                 (nextArgPos = getNextArgPos( 
-                                                  &pData[currArgPos] ) ) > 0 )
-                        {
-                            currArgNum++;
-                            currArgPos += nextArgPos;
-
-#ifdef SERIAL_DEBUG
-                            Serial.print("Arg# is ");
-                            Serial.print( currArgNum );
-                            Serial.print(", pos is ");
-                            Serial.println( currArgPos );
-#endif // SERIAL_DEBUG
-
-                            switch( currArgNum )
-                            { 
-                                case 2:
-                                    argYPos = getInteger( &pData[currArgPos] );
-                                    break;
-                                case 3:
-                                    argColor = (uint16_t) getInteger( &pData[currArgPos] );
-                                    break;
-                                case 4:
-                                    argSize = getInteger( &pData[currArgPos] );
-                                    break;
-                                case 5:
-                                    argBoolean = getBoolean( &pData[currArgPos] );
-                                    break;
-                                case 6:
-                                    argText = getText( &pData[currArgPos] ,
-                                                  &textLength );
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
-#ifdef SERIAL_DEBUG
-                        Serial.println( "NO arg!" );
-#endif // SERIAL_DEBUG
-                        retVal = CMD_INVAL;
-                    }
-
-                    break;
-                case CMD_DRAWTEXT:
-#ifdef SERIAL_DEBUG
-                Serial.println("DRAWTEXT");
-#endif // SERIAL_DEBUG
-                    if( firstArgPos >= 0 )
-                    {
-                        argXPos = getInteger( &pData[firstArgPos] );
-                        currArgNum = 1;
-#ifdef SERIAL_DEBUG
-                        Serial.println( argInt );
-#endif // SERIAL_DEBUG
-
-                        int currArgPos = firstArgPos;
-                        int nextArgPos;
-                        int textLength;
-
-                        while( currArgNum < 5 && 
-                                 (nextArgPos = getNextArgPos( 
-                                                  &pData[currArgPos] ) ) > 0 )
-                        {
-                            currArgNum++;
-                            currArgPos += nextArgPos;
-
-#ifdef SERIAL_DEBUG
-                            Serial.print("Arg# is ");
-                            Serial.print( currArgNum );
-                            Serial.print(", pos is ");
-                            Serial.println( currArgPos );
-#endif // SERIAL_DEBUG
-
-                            switch( currArgNum )
-                            { 
-                                case 2:
-                                    argYPos = getInteger( &pData[currArgPos] );
-                                    break;
-                                case 3:
-                                    argColor = (uint16_t) getInteger( &pData[currArgPos] );
-                                    break;
-                                case 4:
-                                    argSize = getInteger( &pData[currArgPos] );
-                                    break;
-                                case 5:
-                                    argText = getText( &pData[currArgPos] ,
-                                                  &textLength );
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
-#ifdef SERIAL_DEBUG
-                        Serial.println( "NO arg!" );
-#endif // SERIAL_DEBUG
-                        retVal = CMD_INVAL;
-                    }
-
-                    break;
-
-                case CMD_DRAWLINE:
-                case CMD_FAST_H_LINE:
-                case CMD_FAST_V_LINE:
-                case CMD_DRAWRECT:
-                case CMD_FILLRECT:
-                case CMD_DRAWCIRCLE:
-                case CMD_FILLCIRCLE:
-                case CMD_DRAWTRIANGLE:
-                case CMD_FILLTRIANGLE:
-                case CMD_DRAWROUNDRECT:
-                case CMD_FILLROUNDRECT:
-                    break;
-                default:
-#ifdef SERIAL_DEBUG
-                    Serial.println( "invalid command" );
-#endif // SERIAL_DEBUG
-                    retVal = CMD_INVAL;
-                    break;
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    if( (currArgPos = firstArgPos) >= 0 )
-                    {
-                        int nextArgPos = 0;
-                        int textLength;
-                        currArgNum = 1;
-
-                        do
-                        {
-                            currArgPos += nextArgPos;
-
-#ifdef SERIAL_DEBUG
-                            Serial.print("Arg# is ");
-                            Serial.print( currArgNum );
-                            Serial.print(", pos is ");
-                            Serial.println( currArgPos );
-#endif // SERIAL_DEBUG
-
-                            switch( currArgNum )
-                            { 
-                                case 1:
-                                    switch( retVal )
-                                    {
-                                        case CMD_SET_BG:
-                                        case CMD_SET_FG:
-                                            argColor = (uint16_t) getInteger( 
-                                                        &pData[currArgPos] );
-                                            break;
-                                        case CMD_BRIGHTNESS:
-                                            argBrightness = getInteger( 
-                                                           &pData[currArgPos] );
-                                            break;
-                                        case CMD_PRINTTEXT:
-                                        case CMD_TEXTWRAP:
-                                        case CMD_SETROTATION:
-                                        case CMD_CLEAR:
-                                        case CMD_DRAWTEXT:
-                                        case CMD_DRAWLINE:
-                                        case CMD_FAST_H_LINE:
-                                        case CMD_FAST_V_LINE:
-                                        case CMD_DRAWRECT:
-                                        case CMD_FILLRECT:
-                                        case CMD_DRAWCIRCLE:
-                                        case CMD_FILLCIRCLE:
-                                        case CMD_DRAWTRIANGLE:
-                                        case CMD_FILLTRIANGLE:
-                                        case CMD_DRAWROUNDRECT:
-                                        case CMD_FILLROUNDRECT:
-                                    }
-
-                                    argXPos = getInteger( &pData[currArgPos] );
-                                    break;
-                                case 2:
-                                    argYPos = getInteger( &pData[currArgPos] );
-                                    break;
-                                case 3:
-                                    argColor = (uint16_t) getInteger( &pData[currArgPos] );
-                                    break;
-                                case 4:
-                                    argSize = getInteger( &pData[currArgPos] );
-                                    break;
-                                case 5:
-                                    argBoolean = getBoolean( &pData[currArgPos] );
-                                    break;
-                                case 6:
-                                    argText = getText( &pData[currArgPos] ,
-                                                  &textLength );
-                                    break;
-                            }
-
-                            currArgNum++;
-
-                        } while( currArgNum < 6 && 
-                                 (nextArgPos = getNextArgPos( 
-                                     &pData[currArgPos] ) ) > 0 );
-                    }
-                    else
-                    {
-#ifdef SERIAL_DEBUG
-                        Serial.println( "NO arg!" );
-#endif // SERIAL_DEBUG
-                        retVal = CMD_INVAL;
-                    }
-
-                    break;
-
-
-
-
-
-
-
-
-#define BUFFPIXEL 20
-
-void bmpDraw(char *filename, uint8_t x, uint8_t y) {
-
-  File     bmpFile;
-  int      bmpWidth, bmpHeight;   // W+H in pixels
-  uint8_t  bmpDepth;              // Bit depth (currently must be 24)
-  uint32_t bmpImageoffset;        // Start of image data in file
-  uint32_t rowSize;               // Not always = bmpWidth; may have padding
-  uint8_t  sdbuffer[3*BUFFPIXEL]; // pixel buffer (R+G+B per pixel)
-  uint8_t  buffidx = sizeof(sdbuffer); // Current position in sdbuffer
-  boolean  goodBmp = false;       // Set to true on valid header parse
-  boolean  flip    = true;        // BMP is stored bottom-to-top
-  int      w, h, row, col;
-  uint8_t  r, g, b;
-  uint32_t pos = 0, startTime = millis();
-
-  // Open requested file on SD card
-  if ((bmpFile = SD.open(filename)) == NULL) {
-    Serial.print("File not found");
-    return;
-  }
-
-  // Parse BMP header
-  if(read16(bmpFile) == 0x4D42) { // BMP signature
-    bmpWidth  = read32(bmpFile);
-      bmpDepth = read16(bmpFile); // bits per pixel
-        goodBmp = true; // Supported BMP format -- proceed!
-
-        tft.setAddrWindow(x, y, x+w-1, y+h-1);
-
-            b = sdbuffer[buffidx++];
-            g = sdbuffer[buffidx++];
-            r = sdbuffer[buffidx++];
-            tft.pushColor(tft.Color565(r,g,b));
-
-  bmpFile.close();
-  if(!goodBmp) Serial.println("BMP format not recognized.");
-}
-
-// These read 16- and 32-bit types from the SD card file.
-// BMP data is stored little-endian, Arduino is little-endian too.
-// May need to reverse subscript order if porting elsewhere.
-
-uint16_t read16(File f) {
-  uint16_t result;
-  ((uint8_t *)&result)[0] = f.read(); // LSB
-  ((uint8_t *)&result)[1] = f.read(); // MSB
-  return result;
-}
-
-uint32_t read32(File f) {
-  uint32_t result;
-  ((uint8_t *)&result)[0] = f.read(); // LSB
-  ((uint8_t *)&result)[1] = f.read();
-  ((uint8_t *)&result)[2] = f.read();
-  ((uint8_t *)&result)[3] = f.read(); // MSB
-  return result;
-}
-
-
-
-
-// set up variables using the SD utility library functions:
-Sd2Card card;
-SdVolume volume;
-SdFile root;
-
-  Serial.print("\nInitializing SD card...");
-
-  // we'll use the initialization code from the utility libraries
-  // since we're just testing if the card is working!
-if (!card.init(SPI_HALF_SPEED, chipSelect)) {
-  switch (card.type()) {
-    case SD_CARD_TYPE_SD1:
-      Serial.println("SD1");
-      break;
-    case SD_CARD_TYPE_SD2:
-      Serial.println("SD2");
-      break;
-    case SD_CARD_TYPE_SDHC:
-      Serial.println("SDHC");
-      break;
-    default:
-      Serial.println("Unknown");
-  }
-
-  if (!volume.init(card)) {
-    Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
-
-  Serial.print("Clusters:          ");
-  Serial.println(volume.clusterCount());
-  Serial.print("Blocks x Cluster:  ");
-  Serial.println(volume.blocksPerCluster());
-
-  Serial.print("Total Blocks:      ");
-  Serial.println(volume.blocksPerCluster() * volume.clusterCount());
-  Serial.println();
-
-  // print the type and size of the first FAT-type volume
-  uint32_t volumesize;
-  Serial.print("Volume type is:    FAT");
-  Serial.println(volume.fatType(), DEC);
-
-  volumesize = volume.blocksPerCluster();    // clusters are collections of blocks
-  volumesize *= volume.clusterCount();       // we'll have a lot of clusters
-  volumesize /= 2;                           // SD card blocks are always 512 bytes (2 blocks are 1KB)
-  Serial.print("Volume size (Kb):  ");
-  Serial.println(volumesize);
-  Serial.print("Volume size (Mb):  ");
-  volumesize /= 1024;
-  Serial.println(volumesize);
-  Serial.print("Volume size (Gb):  ");
-  Serial.println((float)volumesize / 1024.0);
-
-  root.openRoot(volume);
-
-  // list all files in the card with date and size
-  root.ls(LS_R | LS_DATE | LS_SIZE);
-
-
-File myFile;
-
-
-  // open the file. note that only one file can be open at a time,
-  // so you have to close this one before opening another.
-  myFile = SD.open("test.txt", FILE_WRITE);
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-myFile.println("testing 1, 2, 3.");
-myFile.close();
-
-  // re-open the file for reading:
-myFile = SD.open("test.txt");
-if (myFile) {
-    Serial.println("test.txt:");
-
-    // read from the file until there's nothing else in it:
-while (myFile.available()) {
-      Serial.write(myFile.read());
-    }
-    // close the file:
-myFile.close();
-
-File root;
-
-
-  root = SD.open("/");
-
-  printDirectory(root, 0);
-
-  Serial.println("done!");
-}
-
-
-void printDirectory(File dir, int numTabs) {
-  while (true) {
-
-    File entry =  dir.openNextFile();
-    if (! entry) {
-      // no more files
-      break;
-    }
-    for (uint8_t i = 0; i < numTabs; i++) {
-      Serial.print('\t');
-    }
-    Serial.print(entry.name());
-    if (entry.isDirectory()) {
-      Serial.println("/");
-      printDirectory(entry, numTabs + 1);
-    } else {
-      // files have sizes, directories do not
-      Serial.print("\t\t");
-      Serial.println(entry.size(), DEC);
-    }
-    entry.close();
-  }
-}
-
-
-File myFile;
-
-
-  if (SD.exists("example.txt")) {
-
-
-  // delete the file:
-  Serial.println("Removing example.txt...");
-  SD.remove("example.txt");
-
-  File dataFile = SD.open("datalog.txt");
-
-  // if the file is available, write to it:
-  if (dataFile) {
-    while (dataFile.available()) {
-      Serial.write(dataFile.read());
-    }
-    dataFile.close();
-
-#endif //

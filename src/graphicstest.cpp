@@ -220,6 +220,8 @@ void testtriangles() {
   for(t = 0 ; t <= 15; t++) {
     display->tft_drawTriangle(w, y, y, x, z, x, color);
 
+//    usleep(5000);
+
     x-=4;
     y+=4;
     z-=4;
@@ -242,6 +244,8 @@ void testroundrects() {
 
     for(i = 0 ; i <= 16; i+=1) {
       display->tft_drawRoundRect(x, y, w, h, 5, color);
+
+//      usleep(5000);
 
       x+=2;
       y+=3;
@@ -730,50 +734,56 @@ int main( int argc, char *argv[] )
     else
     {
         display = new smartTFT();
-        if( (retVal = display->connect()) != 0 )
+        if( (retVal = display->connect()) != E_OK )
         {
 fprintf(stderr, "[%d]Connect failed\n", retVal );
         }
+        else
+        {
+// sleep(1);
+display->flushSerial();
 
-        display->tft_fillScreen(ST7735_BLACK);
+            display->tft_fillScreen(ST7735_BLACK);
 
-        // large block of text
-        display->tft_fillScreen(ST7735_BLACK);
-
-
-        testdrawtext((char*) "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST7735_WHITE);
+//            testdrawtext((char*) "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST7735_WHITE);
 
         // tft print function!
-        tftPrintTest();
+// !!!!!           tftPrintTest();
 
-        // a single pixel
-        display->tft_drawPixel(display->tft_width()/2, display->tft_height()/2, ST7735_GREEN);
+            // a single pixel
+            display->tft_drawPixel(display->tft_width()/2, display->tft_height()/2, ST7735_GREEN);
 
 
-        // line draw test
-        testlines(ST7735_YELLOW);
+            // line draw test
+            testlines(ST7735_YELLOW);
 
-        // optimized lines
-        testfastlines(ST7735_RED, ST7735_BLUE);
+            // optimized lines
+            testfastlines(ST7735_RED, ST7735_BLUE);
 
-        testdrawrects(ST7735_GREEN);
+            testdrawrects(ST7735_GREEN);
 
-        testfillrects(ST7735_YELLOW, ST7735_MAGENTA);
+            testfillrects(ST7735_YELLOW, ST7735_MAGENTA);
 
-        display->tft_fillScreen(ST7735_BLACK);
+            display->tft_fillScreen(ST7735_BLACK);
 
-        testfillcircles(10, ST7735_BLUE);
-        testdrawcircles(10, ST7735_WHITE);
+            testfillcircles(10, ST7735_BLUE);
+            testdrawcircles(10, ST7735_WHITE);
 
-        testroundrects();
+            testroundrects();
 
-        testtriangles();
+            testtriangles();
 
-        mediabuttons();
+            mediabuttons();
 
-        display->tft_invertDisplay(true);
+for(int i = 0; i < 20; i++ )
+{
 
-        display->tft_invertDisplay(false);
+            display->tft_invertDisplay(true);
+            sleep(2);
+            display->tft_invertDisplay(false);
+            sleep(2);
+}
+        }
     }
 
     return( retVal );

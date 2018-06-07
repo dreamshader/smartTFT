@@ -152,6 +152,7 @@ class smartTFT {
     int16_t tft_width( void );
     int16_t sendRequest( void );
     int16_t getResponse( void );
+    int16_t flushSerial( void );
 
     int16_t tft_drawPixel(int16_t x, int16_t y, uint16_t color);
     int16_t tft_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 

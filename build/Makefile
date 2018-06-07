@@ -56,11 +56,11 @@ lib-static:
 	$(CXX) $(CXXFLAGS) -c $(LIBSRC)
 
 lib-shared:
-	$(CXX) $(CXXFLAGS) $(CXXLIBSOFLAGS) -c $(LIBSRC)
+	$(CXX) $(CXXFLAGS) $(CXXDEBUG) $(CXXLIBSOFLAGS) -c $(LIBSRC)
 	$(CXX) -shared  -Wl,-soname,$(SOLIBNAME) -o $(SOLIBNAME) $(LIBOBJ)
 
 example: lib-static lib-shared
-	$(CXX) -o $(EXAMPLNAME) $(EXAMPLSRC) $(EXAMPLFLAGS)
+	$(CXX) -o $(EXAMPLNAME) $(CXXDEBUG) $(EXAMPLSRC) $(EXAMPLFLAGS)
 
 
 #g++ -fPIC -shared myclass.cc -o myclass.so

@@ -25,6 +25,30 @@
 
 #define ERR_FAIL    -1
 
+/* ----------------------------------------------------------------------------
+ * int16_t flushSerial( void )
+ *
+ * read the response of the attached smart-TFT into responseBuffer
+ * returns the amount if characters read or an error code
+ ------------------------------------------------------------------------------
+*/
+int16_t smartTFT::flushSerial( void )
+{
+    int retVal;
+
+    if( connection != NULL )
+    {
+        retVal = (int16_t) connection->ser_read( (char*) responseBuffer,
+                                                 RESPONSE_BUFFER_SIZE-1 );
+    }
+    else
+    {
+        retVal = E_NULL_CONNECTION;
+    }
+
+    return( retVal );
+}
+
 
 /* ----------------------------------------------------------------------------
  * int16_t getResponse( void )
@@ -60,18 +84,28 @@ int16_t smartTFT::getResponse( void )
 int16_t smartTFT::sendRequest( void )
 {
     int retVal;
+    int lastCmd;
 
-printf("command >%s<", commandBuffer);
+printf("command >%s", commandBuffer);
 
     if( connection != NULL )
     {
         retVal = (int16_t) connection->ser_write( (char*) commandBuffer,
                                                  strlen((char*) commandBuffer) );
-        if( retVal > 0 )
-        {
+        lastCmd = atoi( (char*) &commandBuffer[1] );
+printf("lastCmd = %d\n", lastCmd);
+//        if( retVal > 0 )
+//        {
+//            memset( (char*) responseBuffer, '\0', RESPONSE_BUFFER_SIZE );
+            responseBuffer[0] = '\0';
+usleep(500000);
+retVal = 0;
+while( retVal >= 0 && atoi( (char*) responseBuffer) != lastCmd )
+{
             retVal = getResponse();
-        }
-printf("response [%s]\n", responseBuffer);
+}
+//        }
+printf("response >%s\n", responseBuffer);
     }
     else
     {
@@ -498,97 +532,5 @@ size_t smartTFT::tft_println(void)
     sprintf((char*) commandBuffer, "f%d(\"\n\")\n", CMD_TFT_PRINTLN);
     return( sendRequest() );
 }
-
-
-
-#ifdef NEVERDEF
-int16_t smartTFT::connect(void) 
-{ 
-
-    return( sendRequest() );
-}
-
-int16_t smartTFT::connect(int16_t connType) 
-{
-
-    _connectiontype = connType; 
-
-    return( sendRequest() );
-}
-
-int16_t smartTFT::connect(int16_t connType, char *pdevice) 
-{ 
-
-    _connectiontype = connType; 
-    _pInterface = strdup( pdevice );
-
-    return( sendRequest() );
-}
-
-int16_t smartTFT::connect(int16_t connType, char *pdevice, uint32_t speed) 
-{ 
-
-    _connectiontype = connType; 
-    _pInterface = strdup( pdevice );
-    _baud = speed;
-
-    return( sendRequest() );
-}
-
-int16_t smartTFT::connect(int16_t connType, char *pdevice, uint32_t speed, 
-                          char parity) 
-{ 
-
-    _connectiontype = connType; 
-    _pInterface = strdup( pdevice );
-    _baud = speed;
-    _parity = parity;
-
-    return( sendRequest() );
-}
-
-int16_t smartTFT::connect(int16_t connType, char *pdevice, uint32_t speed, 
-                          char parity, int8_t databits) 
-{ 
-
-    _connectiontype = connType; 
-    _pInterface = strdup( pdevice );
-    _baud = speed;
-    _parity = parity;
-    _databits = databits;
-
-    return( sendRequest() );
-}
-
-int16_t smartTFT::connect(int16_t connType, char *pdevice, uint32_t speed, 
-                          char parity, int8_t databits, int8_t stopbits) 
-{ 
-
-    _connectiontype = connType; 
-    _pInterface = strdup( pdevice );
-    _baud = speed;
-    _parity = parity;
-    _databits = databits;
-    _stopbits = stopbits;
-
-    return( sendRequest() );
-}
-
-int16_t smartTFT::closeConnection( void )
-{
-
-    return( sendRequest() );
-}
-
-int16_t smartTFT::disconnect( void )
-{
-
-    return( sendRequest() );
-}
-
-#endif // NEVERDEF
-
-
-
 
 
