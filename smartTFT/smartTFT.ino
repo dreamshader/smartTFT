@@ -15,8 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-Der Sketch verwendet 22378 Bytes (72%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 1276 Bytes (62%) des dynamischen Speichers, 772 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
+Der Sketch verwendet 25900 Bytes (84%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
+Globale Variablen verwenden 1289 Bytes (62%) des dynamischen Speichers, 759 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
 
 
 
@@ -361,6 +361,108 @@ size_t tftWrite( uint8_t char2Write )
     return( tft.write( char2Write ) );
 }
 
+  // This MUST be defined by the subclass:
+int tftDrawPixel(int xPos, int yPos, uint16_t color)
+{
+    tft.drawPixel( xPos, yPos, color );
+    return(0);
+}
+
+
+//    size_t tft_print(string data);
+//    size_t tft_print(const char data[]);
+//    size_t tft_print(char data);
+//    size_t tft_print(unsigned char data, int fmt = DEC);
+//    size_t tft_print(int data, int fmt = DEC);
+//    size_t tft_print(unsigned int data, int fmt = DEC);
+//    size_t tft_print(long data, int fmt = DEC);
+//    size_t tft_print(unsigned long data, int fmt = DEC);
+//    size_t tft_print(double data, int fmt = 2);
+//    size_t tft_println(void);
+int tftPrint_Text( int printCmd, char *pText )
+{
+    int retVal = 0;
+    
+    switch( printCmd )
+    {
+        case CMD_TFT_PRINT:
+            tft.print( pText );
+            break;
+        case CMD_TFT_PRINTLN:
+            tft.println( pText );
+            break;
+    }
+
+    return( retVal );
+}
+
+int tftPrint_Long( int printCmd, long argLong )
+{
+    int retVal = 0;
+    
+    switch( printCmd )
+    {
+        case CMD_TFT_PRINT:
+            tft.print( argLong );
+            break;
+        case CMD_TFT_PRINTLN:
+            tft.println( argLong );
+            break;
+    }
+
+    return( retVal );
+}
+
+int tftPrint_LongFmt( int printCmd, long argLong, int format )
+{
+    int retVal = 0;
+    
+    switch( printCmd )
+    {
+        case CMD_TFT_PRINT:
+            tft.print( argLong, format );
+            break;
+        case CMD_TFT_PRINTLN:
+            tft.println( argLong, format );
+            break;
+    }
+
+    return( retVal );
+}
+
+int tftPrint_Double( int printCmd, double argDouble )
+{
+    int retVal = 0;
+    
+    switch( printCmd )
+    {
+        case CMD_TFT_PRINT:
+            tft.print( argDouble );
+            break;
+        case CMD_TFT_PRINTLN:
+            tft.println( argDouble );
+            break;
+    }
+
+    return( retVal );
+}
+
+int tftPrint_DoubleFmt( int printCmd, double argDouble, int format )
+{
+    int retVal = 0;
+    
+    switch( printCmd )
+    {
+        case CMD_TFT_PRINT:
+            tft.print( argDouble, format );
+            break;
+        case CMD_TFT_PRINTLN:
+            tft.println( argDouble, format );
+            break;
+    }
+
+    return( retVal );
+}
 
 
 //
@@ -410,6 +512,46 @@ unsigned char getUChar( char* pCommand )
 
 //
 
+long getLong( char* pCommand )
+{
+    long retVal = CMD_INVAL;
+
+    if( pCommand != NULL )
+    {
+        int i;
+        for(i = 0; pCommand[i] != '\0' && !isDigit(pCommand[i]) ; i++ )
+            ;
+
+        if( isDigit(pCommand[i]) )
+        {
+            retVal = atol(&pCommand[i]);
+        }
+    }
+
+    return( retVal );
+}
+
+
+double getDouble( char* pCommand )
+{
+    double retVal = CMD_INVAL;
+
+    if( pCommand != NULL )
+    {
+        int i;
+        for(i = 0; pCommand[i] != '\0' && !isDigit(pCommand[i]) ; i++ )
+            ;
+
+        if( isDigit(pCommand[i]) )
+        {
+            retVal = atof(&pCommand[i]);
+        }
+    }
+
+    return( retVal );
+}
+
+
 
 bool getBoolean( char* pCommand )
 {
@@ -452,7 +594,17 @@ char *getText( char *pData, int *pLength )
             {
                 if( pData[txtLength] == '"' )
                 {
-                    endText = 1;
+                    if( txtLength > 0 )
+                    {
+                        if( pData[txtLength] != '\\' )
+                        {
+                            endText = 1;
+                        }
+                    }
+                    else
+                    {
+                        endText = 1;
+                    }
                 }
                 else
                 {
@@ -554,6 +706,10 @@ int commandParser( String &dataRead )
     uint16_t argFgColor, argBgColor;
     int setTextColorNumArguments;
     uint8_t argWrite;
+    int printNumArguments;
+    long printLongArg;
+    double printDoubleArg;
+    int printArgFmt;
 
     char *pData = dataRead.c_str();
 
@@ -591,6 +747,7 @@ Serial.println( dataRead );
                 textLength = 0;
                 currArgNum = 1;
                 setTextColorNumArguments = 0;
+                printNumArguments = 0;
 
                 do
                 {
@@ -608,6 +765,23 @@ Serial.println( dataRead );
                         case 1:
                             switch( retVal )
                             {
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
+                                    argText = getText( &pData[currArgPos] ,
+                                                  &textLength );
+                                    if( argText == NULL )
+                                    {
+                                        printLongArg = getLong(
+                                                         &pData[currArgPos] );
+                                        printDoubleArg = getDouble( 
+                                                          &pData[currArgPos] );
+                                        printNumArguments = 1;
+                                    }
+                                    else
+                                    {
+                                        printNumArguments = 1;
+                                    }
+                                    break;
                                 case CMD_SET_BG:
                                 case CMD_SET_FG:
                                 case CMD_FILLSCREEN:
@@ -651,6 +825,7 @@ Serial.println( dataRead );
                                 case CMD_DRAWBITMAP:
                                 case CMD_DRAWCHAR:
                                 case CMD_SETCURSOR:
+                                case CMD_DRAWPIXEL:
                                     argXPos = getInteger( &pData[currArgPos] );
                                     break;
                                 case CMD_DRAWLINE:
@@ -681,6 +856,16 @@ Serial.println( dataRead );
                                 case CMD_FILLSCREEN:
                                 case CMD_INVERTDISPLAY:
                                 case CMD_SETTEXTSIZE:
+                                case CMD_TFT_WRITE:
+                                    break;
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
+                                    printArgFmt = getInteger( 
+                                                      &pData[currArgPos] );
+                                    if( printArgFmt != 0 )
+                                    {
+                                        printNumArguments = 2;
+                                    }
                                     break;
                                 case CMD_PRINTTEXT:
                                 case CMD_DRAWTEXT:
@@ -693,6 +878,7 @@ Serial.println( dataRead );
                                 case CMD_DRAWBITMAP:
                                 case CMD_DRAWCHAR:
                                 case CMD_SETCURSOR:
+                                case CMD_DRAWPIXEL:
                                     argYPos = getInteger( &pData[currArgPos] );
                                     break;
                                 case CMD_DRAWLINE:
@@ -730,9 +916,13 @@ Serial.println( dataRead );
                                 case CMD_SETTEXTSIZE:
                                 case CMD_SETCURSOR:
                                 case CMD_SETTEXTCOLOR:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
                                     break;
                                 case CMD_PRINTTEXT:
                                 case CMD_DRAWTEXT:
+                                case CMD_DRAWPIXEL:
                                     argColor = (uint16_t) getInteger( 
                                                       &pData[currArgPos] );
                                     break;
@@ -790,6 +980,10 @@ Serial.println( dataRead );
                                 case CMD_SETTEXTSIZE:
                                 case CMD_SETCURSOR:
                                 case CMD_SETTEXTCOLOR:
+                                case CMD_DRAWPIXEL:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
                                     break;
                                 case CMD_PRINTTEXT:
                                 case CMD_DRAWTEXT:
@@ -850,6 +1044,10 @@ Serial.println( dataRead );
                                 case CMD_SETTEXTSIZE:
                                 case CMD_SETCURSOR:
                                 case CMD_SETTEXTCOLOR:
+                                case CMD_DRAWPIXEL:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
                                     break;
                                 case CMD_PRINTTEXT:
                                     argBoolean = getBoolean( &pData[currArgPos] );
@@ -913,6 +1111,10 @@ Serial.println( dataRead );
                                 case CMD_SETCURSOR:
                                 case CMD_DRAWCIRCLEHELPER:
                                 case CMD_SETTEXTCOLOR:
+                                case CMD_DRAWPIXEL:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
                                     break;
                                 case CMD_PRINTTEXT:
                                     argText = getText( &pData[currArgPos] ,
@@ -966,6 +1168,10 @@ Serial.println( dataRead );
                                 case CMD_DRAWBITMAP:
                                 case CMD_DRAWCHAR:
                                 case CMD_SETTEXTCOLOR:
+                                case CMD_DRAWPIXEL:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
                                     break;
                                 case CMD_DRAWTRIANGLE:
                                 case CMD_FILLTRIANGLE:
@@ -1102,8 +1308,39 @@ Serial.println( dataRead );
                 tftWidth();
                 break;
             case CMD_DRAWPIXEL:
+                tftDrawPixel(argXPos, argYPos, argColor);
+                break;
             case CMD_TFT_PRINT:
             case CMD_TFT_PRINTLN:
+                if( argText != NULL )
+                {
+                    tftPrint_Text( retVal, argText );
+                }
+                else
+                {
+                    if( printLongArg == printDoubleArg )
+                    {
+                        if( printNumArguments == 1 )
+                        {
+                            tftPrint_Long( retVal, printLongArg );
+                        }
+                        else
+                        {
+                            tftPrint_LongFmt( retVal, printLongArg, printArgFmt );
+                        }
+                    }
+                    else
+                    {
+                        if( printNumArguments == 1 )
+                        {
+                            tftPrint_Double( retVal, printDoubleArg );
+                        }
+                        else
+                        {
+                            tftPrint_DoubleFmt(retVal,printDoubleArg,printArgFmt);
+                        }
+                    }
+                }
                 break;
             case CMD_TFT_WRITE:
                 tftWrite( argWrite );
