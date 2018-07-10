@@ -5,3 +5,4 @@ tmp/*
 *.swp
 *.blend1
 grafiktest-eigenes.cpp
+*.s#*
