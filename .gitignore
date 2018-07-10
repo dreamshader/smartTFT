@@ -3,3 +3,5 @@ tmp/*
 *.a
 *.so
 *.swp
+*.blend1
+grafiktest-eigenes.cpp
