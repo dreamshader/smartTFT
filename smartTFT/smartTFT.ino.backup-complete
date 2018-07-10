@@ -47,9 +47,8 @@ Globale Variablen verwenden 1334 Bytes (65%) des dynamischen Speichers, 714 Byte
 
 
 //
-#define PIN_BUZZER           5
 #define TFT_BACKLIGHT        6
-#define LDR_INPUT           A1
+#define LDR_INPUT           A0
 //
 #define TFT_CS              10
 #define TFT_RST              9
@@ -970,6 +969,17 @@ Serial.println( dataRead );
                        case 2:
                             switch( retVal )
                             {
+                                case CMD_SET_BG:
+                                case CMD_SET_FG:
+                                case CMD_BRIGHTNESS:
+                                case CMD_TEXTWRAP:
+                                case CMD_SETROTATION:
+                                case CMD_CLEAR:
+                                case CMD_FILLSCREEN:
+                                case CMD_INVERTDISPLAY:
+                                case CMD_SETTEXTSIZE:
+                                case CMD_TFT_WRITE:
+                                    break;
                                 case CMD_TFT_PRINT:
                                 case CMD_TFT_PRINTLN:
                                     printArgFmt = getInteger( 
@@ -1017,6 +1027,21 @@ Serial.println( dataRead );
                        case 3:
                             switch( retVal )
                             {
+                                case CMD_SET_BG:
+                                case CMD_SET_FG:
+                                case CMD_BRIGHTNESS:
+                                case CMD_TEXTWRAP:
+                                case CMD_SETROTATION:
+                                case CMD_CLEAR:
+                                case CMD_FILLSCREEN:
+                                case CMD_INVERTDISPLAY:
+                                case CMD_SETTEXTSIZE:
+                                case CMD_SETCURSOR:
+                                case CMD_SETTEXTCOLOR:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
+                                    break;
                                 case CMD_PRINTTEXT:
                                 case CMD_DRAWTEXT:
                                 case CMD_DRAWPIXEL:
@@ -1066,6 +1091,22 @@ Serial.println( dataRead );
                        case 4:
                             switch( retVal )
                             {
+                                case CMD_SET_BG:
+                                case CMD_SET_FG:
+                                case CMD_BRIGHTNESS:
+                                case CMD_TEXTWRAP:
+                                case CMD_SETROTATION:
+                                case CMD_CLEAR:
+                                case CMD_FILLSCREEN:
+                                case CMD_INVERTDISPLAY:
+                                case CMD_SETTEXTSIZE:
+                                case CMD_SETCURSOR:
+                                case CMD_SETTEXTCOLOR:
+                                case CMD_DRAWPIXEL:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
+                                    break;
                                 case CMD_PRINTTEXT:
                                 case CMD_DRAWTEXT:
                                     argSize = getInteger( 
@@ -1110,6 +1151,26 @@ Serial.println( dataRead );
                        case 5:
                             switch( retVal )
                             {
+                                case CMD_SET_BG:
+                                case CMD_SET_FG:
+                                case CMD_BRIGHTNESS:
+                                case CMD_TEXTWRAP:
+                                case CMD_SETROTATION:
+                                case CMD_CLEAR:
+                                case CMD_FAST_H_LINE:
+                                case CMD_FAST_V_LINE:
+                                case CMD_DRAWCIRCLE:
+                                case CMD_FILLCIRCLE:
+                                case CMD_FILLSCREEN:
+                                case CMD_INVERTDISPLAY:
+                                case CMD_SETTEXTSIZE:
+                                case CMD_SETCURSOR:
+                                case CMD_SETTEXTCOLOR:
+                                case CMD_DRAWPIXEL:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
+                                    break;
                                 case CMD_PRINTTEXT:
                                     argBoolean = getBoolean( &pData[currArgPos] );
                                     break;
@@ -1152,6 +1213,31 @@ Serial.println( dataRead );
                        case 6:
                             switch( retVal )
                             {
+                                case CMD_SET_BG:
+                                case CMD_SET_FG:
+                                case CMD_BRIGHTNESS:
+                                case CMD_TEXTWRAP:
+                                case CMD_SETROTATION:
+                                case CMD_CLEAR:
+                                case CMD_FAST_H_LINE:
+                                case CMD_FAST_V_LINE:
+                                case CMD_DRAWCIRCLE:
+                                case CMD_FILLCIRCLE:
+                                case CMD_DRAWTEXT:
+                                case CMD_DRAWLINE:
+                                case CMD_DRAWRECT:
+                                case CMD_FILLRECT:
+                                case CMD_FILLSCREEN:
+                                case CMD_INVERTDISPLAY:
+                                case CMD_SETTEXTSIZE:
+                                case CMD_SETCURSOR:
+                                case CMD_DRAWCIRCLEHELPER:
+                                case CMD_SETTEXTCOLOR:
+                                case CMD_DRAWPIXEL:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
+                                    break;
                                 case CMD_PRINTTEXT:
                                     argText = getText( &pData[currArgPos] ,
                                                   &textLength );
@@ -1178,6 +1264,37 @@ Serial.println( dataRead );
                        case 7:
                             switch( retVal )
                             {
+                                case CMD_SET_BG:
+                                case CMD_SET_FG:
+                                case CMD_BRIGHTNESS:
+                                case CMD_TEXTWRAP:
+                                case CMD_SETROTATION:
+                                case CMD_CLEAR:
+                                case CMD_FAST_H_LINE:
+                                case CMD_FAST_V_LINE:
+                                case CMD_DRAWCIRCLE:
+                                case CMD_FILLCIRCLE:
+                                case CMD_DRAWTEXT:
+                                case CMD_DRAWLINE:
+                                case CMD_DRAWRECT:
+                                case CMD_FILLRECT:
+                                case CMD_PRINTTEXT:
+                                case CMD_DRAWROUNDRECT:
+                                case CMD_FILLROUNDRECT:
+                                case CMD_FILLSCREEN:
+                                case CMD_INVERTDISPLAY:
+                                case CMD_SETTEXTSIZE:
+                                case CMD_SETCURSOR:
+                                case CMD_DRAWCIRCLEHELPER:
+                                case CMD_FILLCIRCLEHELPER:
+                                case CMD_DRAWBITMAP:
+                                case CMD_DRAWCHAR:
+                                case CMD_SETTEXTCOLOR:
+                                case CMD_DRAWPIXEL:
+                                case CMD_TFT_WRITE:
+                                case CMD_TFT_PRINT:
+                                case CMD_TFT_PRINTLN:
+                                    break;
                                 case CMD_DRAWTRIANGLE:
                                 case CMD_FILLTRIANGLE:
                                     argColor = (uint16_t) getInteger( 

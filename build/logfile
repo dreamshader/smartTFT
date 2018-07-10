@@ -1,0 +1,378 @@
+command >f20(0)
+lastCmd = 20
+response >20
+command >f30(0, 0, 2016)
+lastCmd = 30
+response >30
+command >f20(0)
+lastCmd = 20
+response >20
+command >f20(0)
+lastCmd = 20
+response >20
+command >f20(0)
+lastCmd = 20
+response >20
+command >f20(0)
+lastCmd = 20
+response >20
+command >f20(0)
+lastCmd = 20
+response >20
+command >f20(0)
+lastCmd = 20
+response >20
+command >f20(0)
+lastCmd = 20
+response >20
+command >f20(0)
+lastCmd = 20
+response >20
+command >f14(0, 0, 10, 65535)
+lastCmd = 14
+response >14
+command >f20(0)
+lastCmd = 20
+response >20
+command >f18(0, 0, -2, -2, 5, 100)
+lastCmd = 18
+response >18
+command >f18(2, 3, -6, -8, 5, 1200)
+lastCmd = 18
+response >18
+command >f18(4, 6, -10, -14, 5, 2300)
+lastCmd = 18
+response >18
+command >f18(6, 9, -14, -20, 5, 3400)
+lastCmd = 18
+response >18
+command >f18(8, 12, -18, -26, 5, 4500)
+lastCmd = 18
+response >18
+command >f18(10, 15, -22, -32, 5, 5600)
+lastCmd = 18
+response >18
+command >f18(12, 18, -26, -38, 5, 6700)
+lastCmd = 18
+response >18
+command >f18(14, 21, -30, -44, 5, 7800)
+lastCmd = 18
+response >18
+command >f18(16, 24, -34, -50, 5, 8900)
+lastCmd = 18
+response >18
+command >f18(18, 27, -38, -56, 5, 10000)
+lastCmd = 18
+response >18
+command >f18(20, 30, -42, -62, 5, 11100)
+lastCmd = 18
+response >18
+command >f18(22, 33, -46, -68, 5, 12200)
+lastCmd = 18
+response >18
+command >f18(24, 36, -50, -74, 5, 13300)
+lastCmd = 18
+response >18
+command >f18(26, 39, -54, -80, 5, 14400)
+lastCmd = 18
+response >18
+command >f18(28, 42, -58, -86, 5, 15500)
+lastCmd = 18
+response >18
+command >f18(30, 45, -62, -92, 5, 16600)
+lastCmd = 18
+response >18
+command >f18(32, 48, -66, -98, 5, 17700)
+lastCmd = 18
+response >18
+command >f18(0, 0, -2, -2, 5, 18900)
+lastCmd = 18
+response >18
+command >f18(2, 3, -6, -8, 5, 20000)
+lastCmd = 18
+response >18
+command >f18(4, 6, -10, -14, 5, 21100)
+lastCmd = 18
+response >18
+command >f18(6, 9, -14, -20, 5, 22200)
+lastCmd = 18
+response >18
+command >f18(8, 12, -18, -26, 5, 23300)
+lastCmd = 18
+response >18
+command >f18(10, 15, -22, -32, 5, 24400)
+lastCmd = 18
+response >18
+command >f18(12, 18, -26, -38, 5, 25500)
+lastCmd = 18
+response >18
+command >f18(14, 21, -30, -44, 5, 26600)
+lastCmd = 18
+response >18
+command >f18(16, 24, -34, -50, 5, 27700)
+lastCmd = 18
+response >18
+command >f18(18, 27, -38, -56, 5, 28800)
+lastCmd = 18
+response >18
+command >f18(20, 30, -42, -62, 5, 29900)
+lastCmd = 18
+response >18
+command >f18(22, 33, -46, -68, 5, 31000)
+lastCmd = 18
+response >18
+command >f18(24, 36, -50, -74, 5, 32100)
+lastCmd = 18
+response >18
+command >f18(26, 39, -54, -80, 5, 33200)
+lastCmd = 18
+response >18
+command >f18(28, 42, -58, -86, 5, 34300)
+lastCmd = 18
+response >18
+command >f18(30, 45, -62, -92, 5, 35400)
+lastCmd = 18
+response >18
+command >f18(32, 48, -66, -98, 5, 36500)
+lastCmd = 18
+response >18
+command >f18(0, 0, -2, -2, 5, 37700)
+lastCmd = 18
+response >18
+command >f18(2, 3, -6, -8, 5, 38800)
+lastCmd = 18
+response >18
+command >f18(4, 6, -10, -14, 5, 39900)
+lastCmd = 18
+response >18
+command >f18(6, 9, -14, -20, 5, 41000)
+lastCmd = 18
+response >18
+command >f18(8, 12, -18, -26, 5, 42100)
+lastCmd = 18
+response >18
+command >f18(10, 15, -22, -32, 5, 43200)
+lastCmd = 18
+response >18
+command >f18(12, 18, -26, -38, 5, 44300)
+lastCmd = 18
+response >18
+command >f18(14, 21, -30, -44, 5, 45400)
+lastCmd = 18
+response >18
+command >f18(16, 24, -34, -50, 5, 46500)
+lastCmd = 18
+response >18
+command >f18(18, 27, -38, -56, 5, 47600)
+lastCmd = 18
+response >18
+command >f18(20, 30, -42, -62, 5, 48700)
+lastCmd = 18
+response >18
+command >f18(22, 33, -46, -68, 5, 49800)
+lastCmd = 18
+response >18
+command >f18(24, 36, -50, -74, 5, 50900)
+lastCmd = 18
+response >18
+command >f18(26, 39, -54, -80, 5, 52000)
+lastCmd = 18
+response >18
+command >f18(28, 42, -58, -86, 5, 53100)
+lastCmd = 18
+response >18
+command >f18(30, 45, -62, -92, 5, 54200)
+lastCmd = 18
+response >18
+command >f18(32, 48, -66, -98, 5, 55300)
+lastCmd = 18
+response >18
+command >f18(0, 0, -2, -2, 5, 56500)
+lastCmd = 18
+response >18
+command >f18(2, 3, -6, -8, 5, 57600)
+lastCmd = 18
+response >18
+command >f18(4, 6, -10, -14, 5, 58700)
+lastCmd = 18
+response >18
+command >f18(6, 9, -14, -20, 5, 59800)
+lastCmd = 18
+response >18
+command >f18(8, 12, -18, -26, 5, 60900)
+lastCmd = 18
+response >18
+command >f18(10, 15, -22, -32, 5, 62000)
+lastCmd = 18
+response >18
+command >f18(12, 18, -26, -38, 5, 63100)
+lastCmd = 18
+response >18
+command >f18(14, 21, -30, -44, 5, 64200)
+lastCmd = 18
+response >18
+command >f18(16, 24, -34, -50, 5, 65300)
+lastCmd = 18
+response >18
+command >f18(18, 27, -38, -56, 5, 864)
+lastCmd = 18
+response >18
+command >f18(20, 30, -42, -62, 5, 1964)
+lastCmd = 18
+response >18
+command >f18(22, 33, -46, -68, 5, 3064)
+lastCmd = 18
+response >18
+command >f18(24, 36, -50, -74, 5, 4164)
+lastCmd = 18
+response >18
+command >f18(26, 39, -54, -80, 5, 5264)
+lastCmd = 18
+response >18
+command >f18(28, 42, -58, -86, 5, 6364)
+lastCmd = 18
+response >18
+command >f18(30, 45, -62, -92, 5, 7464)
+lastCmd = 18
+response >18
+command >f18(32, 48, -66, -98, 5, 8564)
+lastCmd = 18
+response >18
+command >f18(0, 0, -2, -2, 5, 9764)
+lastCmd = 18
+response >18
+command >f18(2, 3, -6, -8, 5, 10864)
+lastCmd = 18
+response >18
+command >f18(4, 6, -10, -14, 5, 11964)
+lastCmd = 18
+response >18
+command >f18(6, 9, -14, -20, 5, 13064)
+lastCmd = 18
+response >18
+command >f18(8, 12, -18, -26, 5, 14164)
+lastCmd = 18
+response >18
+command >f18(10, 15, -22, -32, 5, 15264)
+lastCmd = 18
+response >18
+command >f18(12, 18, -26, -38, 5, 16364)
+lastCmd = 18
+response >18
+command >f18(14, 21, -30, -44, 5, 17464)
+lastCmd = 18
+response >18
+command >f18(16, 24, -34, -50, 5, 18564)
+lastCmd = 18
+response >18
+command >f18(18, 27, -38, -56, 5, 19664)
+lastCmd = 18
+response >18
+command >f18(20, 30, -42, -62, 5, 20764)
+lastCmd = 18
+response >18
+command >f18(22, 33, -46, -68, 5, 21864)
+lastCmd = 18
+response >18
+command >f18(24, 36, -50, -74, 5, 22964)
+lastCmd = 18
+response >18
+command >f18(26, 39, -54, -80, 5, 24064)
+lastCmd = 18
+response >18
+command >f18(28, 42, -58, -86, 5, 25164)
+lastCmd = 18
+response >18
+command >f18(30, 45, -62, -92, 5, 26264)
+lastCmd = 18
+response >18
+command >f18(32, 48, -66, -98, 5, 27364)
+lastCmd = 18
+response >18
+command >f20(0)
+lastCmd = 20
+response >20
+command >f16(0, 0, 0, -1, 0, -1, 63488)
+lastCmd = 16
+response >16
+command >f16(0, 4, 4, -5, -4, -5, 63588)
+lastCmd = 16
+response >16
+command >f16(0, 8, 8, -9, -8, -9, 63688)
+lastCmd = 16
+response >16
+command >f16(0, 12, 12, -13, -12, -13, 63788)
+lastCmd = 16
+response >16
+command >f16(0, 16, 16, -17, -16, -17, 63888)
+lastCmd = 16
+response >16
+command >f16(0, 20, 20, -21, -20, -21, 63988)
+lastCmd = 16
+response >16
+command >f16(0, 24, 24, -25, -24, -25, 64088)
+lastCmd = 16
+response >16
+command >f16(0, 28, 28, -29, -28, -29, 64188)
+lastCmd = 16
+response >16
+command >f16(0, 32, 32, -33, -32, -33, 64288)
+lastCmd = 16
+response >16
+command >f16(0, 36, 36, -37, -36, -37, 64388)
+lastCmd = 16
+response >16
+command >f16(0, 40, 40, -41, -40, -41, 64488)
+lastCmd = 16
+response >16
+command >f16(0, 44, 44, -45, -44, -45, 64588)
+lastCmd = 16
+response >16
+command >f16(0, 48, 48, -49, -48, -49, 64688)
+lastCmd = 16
+response >16
+command >f16(0, 52, 52, -53, -52, -53, 64788)
+lastCmd = 16
+response >16
+command >f16(0, 56, 56, -57, -56, -57, 64888)
+lastCmd = 16
+response >16
+command >f16(0, 60, 60, -61, -60, -61, 64988)
+lastCmd = 16
+response >16
+command >f20(0)
+lastCmd = 20
+response >20
+command >f19(25, 10, 78, 60, 8, 65535)
+lastCmd = 19
+response >19
+command >f17(42, 20, 42, 60, 90, 40, 63488)
+lastCmd = 17
+response >17
+command >f19(25, 90, 78, 60, 8, 65535)
+lastCmd = 19
+response >19
+command >f19(39, 98, 20, 45, 5, 2016)
+lastCmd = 19
+response >19
+command >f19(69, 98, 20, 45, 5, 2016)
+lastCmd = 19
+response >19
+command >f17(42, 20, 42, 60, 90, 40, 31)
+lastCmd = 17
+response >17
+command >f19(39, 98, 20, 45, 5, 63488)
+lastCmd = 19
+response >19
+command >f19(69, 98, 20, 45, 5, 63488)
+lastCmd = 19
+response >19
+command >f17(42, 20, 42, 60, 90, 40, 2016)
+lastCmd = 17
+response >17
+command >f21(1)
+lastCmd = 21
+response >21
+command >f21(0)
+lastCmd = 21
+response >21

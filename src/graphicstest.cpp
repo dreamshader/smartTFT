@@ -745,10 +745,10 @@ display->flushSerial();
 
             display->tft_fillScreen(ST7735_BLACK);
 
-//            testdrawtext((char*) "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST7735_WHITE);
+            testdrawtext((char*) "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST7735_WHITE);
 
         // tft print function!
-// !!!!!           tftPrintTest();
+           tftPrintTest();
 
             // a single pixel
             display->tft_drawPixel(display->tft_width()/2, display->tft_height()/2, ST7735_GREEN);
