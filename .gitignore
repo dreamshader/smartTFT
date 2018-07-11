@@ -1,4 +1,5 @@
 tmp/*
+rawImage/*
 *.o
 *.a
 *.so
