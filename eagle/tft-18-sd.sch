@@ -5296,17 +5296,17 @@ W = angled&lt;p&gt;
 <instances>
 <instance part="B1" gate="G$1" x="45.72" y="63.5"/>
 <instance part="B2" gate="G$1" x="48.26" y="40.64"/>
-<instance part="U$1" gate="G$1" x="40.64" y="93.98"/>
+<instance part="U$1" gate="G$1" x="71.12" y="7.62"/>
 <instance part="J1" gate="G$1" x="91.44" y="93.98"/>
 <instance part="X1" gate="1" x="93.98" y="73.66"/>
-<instance part="R1" gate="G$1" x="-2.54" y="81.28"/>
-<instance part="R2" gate="G$1" x="0" y="60.96"/>
-<instance part="R3" gate="G$1" x="0" y="50.8"/>
-<instance part="SG1" gate="G$1" x="2.54" y="99.06"/>
-<instance part="R4" gate="G$1" x="93.98" y="43.18"/>
+<instance part="R1" gate="G$1" x="63.5" y="119.38"/>
+<instance part="R2" gate="G$1" x="71.12" y="127"/>
+<instance part="R3" gate="G$1" x="45.72" y="127"/>
+<instance part="SG1" gate="G$1" x="81.28" y="111.76"/>
+<instance part="R4" gate="G$1" x="104.14" y="111.76"/>
 <instance part="U$2" gate="G$1" x="5.08" y="30.48"/>
-<instance part="SV1" gate="1" x="10.16" y="71.12"/>
-<instance part="J3" gate="G$1" x="104.14" y="48.26"/>
+<instance part="SV1" gate="1" x="114.3" y="43.18"/>
+<instance part="J3" gate="G$1" x="-33.02" y="73.66"/>
 </instances>
 <busses>
 </busses>
