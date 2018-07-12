@@ -1,5 +1,6 @@
 tmp/*
 doc/rawImage/*
+doc/rawDrawing/*
 *.o
 *.a
 *.so
